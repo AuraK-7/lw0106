@@ -1,0 +1,39 @@
+name: Sync Gerrit → GitHub
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # 每5分钟检查一次
+  workflow_dispatch:        # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.GERRIT_SSH_KEY }}
+
+      - name: Fetch from Gerrit
+        run: |
+          git remote add gerrit ssh://23301132@gerrit.lilingkun.com:29418/LW-01-06
+          git fetch gerrit master
+
+      - name: Sync to GitHub (if new commits)
+        run: |
+          GERIT_SHA=$(git rev-parse gerrit/master)
+          GITHUB_SHA=$(git rev-parse HEAD)
+          if [ "$GERIT_SHA" != "$GITHUB_SHA" ]; then
+            echo "New commits detected, syncing..."
+            git checkout -b main
+            git reset --hard gerrit/master
+            git push origin main --force
+            echo "Synced $GERIT_SHA to main"
+          else
+            echo "Already in sync"
+          fi

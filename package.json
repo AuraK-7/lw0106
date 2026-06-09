@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "check": "node tool/check.cjs",
-    "pack": "node tool/pack.cjs"
+    "pack": "node tool/pack.cjs",
+    "sync": "git fetch gerrit master && git push github gerrit/master:main --force"
   },
   "dependencies": {
     "react": "^19.2.5",
