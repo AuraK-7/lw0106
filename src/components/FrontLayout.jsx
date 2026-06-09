@@ -52,7 +52,7 @@ export default function FrontLayout() {
         </div>
       </div>
       <Content className="page-content"><div className="container"><Outlet /></div></Content>
-      <Footer className="site-footer">React + Vite + Router v6 + Ant Design 课程作业演示项目</Footer>
+      <Footer className="site-footer">© 2026 星舟商城. 保留所有权利.</Footer>
     </Layout>
   );
 }
