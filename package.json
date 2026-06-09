@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "check": "node tool/check.cjs",
     "pack": "node tool/pack.cjs",
-    "sync": "git fetch gerrit master && git push github gerrit/master:main --force"
+    "sync": "node tool/sync.cjs"
   },
   "dependencies": {
     "react": "^19.2.5",
