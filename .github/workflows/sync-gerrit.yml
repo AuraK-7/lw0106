@@ -22,10 +22,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GERRIT_SSH_KEY }}
 
-      - name: Add Gerrit host key
+      - name: Add Gerrit + GitHub host keys
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -p 29418 gerrit.lilingkun.com >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Switch origin to SSH
+        run: |
+          git remote set-url origin git@github.com:AuraK-7/lw0106.git
 
       - name: Fetch from Gerrit
         run: |
