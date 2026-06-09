@@ -16,7 +16,7 @@ const DetailPage = () => {
 
 
   if (!good) {
-    //TBD 跳转主页
+    //TBD 璺宠浆涓婚〉
     navigate('/home');
   }
 
@@ -27,7 +27,7 @@ const DetailPage = () => {
     <p> goodPrice: {good && good.price}</p>
     <p> goodCategoryId: {good && good.categoryId}</p>
     <img src={good && good.img} alt={good && good.name} />
-    <button onClick={onBuyClick}>购买</button>
+    <button onClick={onBuyClick}>璐拱</button>
   </>
 }
 

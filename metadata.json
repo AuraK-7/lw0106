@@ -1,11 +1,11 @@
 {
-  "studentName": "小明",
-  "studentId": "23300000",
-  "assignmentName": "第四次作业",
+  "studentName": "演示同学",
+  "studentId": "20240001",
+  "assignmentName": "第四次作业——React 商城系统",
   "members": [
-    { "name": "组员1姓名", "studentId": "学号" },
-    { "name": "组员2姓名", "studentId": "学号" },
-    { "name": "组员3姓名", "studentId": "学号" },
-    { "name": "组员4姓名", "studentId": "学号" }
+    { "name": "演示同学", "studentId": "20240001" },
+    { "name": "协作同学A", "studentId": "20240002" },
+    { "name": "协作同学B", "studentId": "20240003" },
+    { "name": "协作同学C", "studentId": "20240004" }
   ]
 }

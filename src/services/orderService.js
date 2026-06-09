@@ -5,7 +5,7 @@ const defaultList = [
     orderNo: '201801010001',
     createTime: '2018-01-01 00:00:00',
     payTime: '2018-01-01 00:00:00',
-    status: 0, // 0,未支付 1已支付 2发货 3确认收货
+    status: 0, // 0,鏈敮浠?1宸叉敮浠?2鍙戣揣 3纭鏀惰揣
     price: 100,
     goodId: 1,
   }
@@ -20,7 +20,7 @@ class OrderService {
 
   createOrder(userId, goodId, price) {
     const orderNo = new Date().getTime();
-    // 从list中找到最大值，生成新的id
+    // 浠巐ist涓壘鍒版渶澶у€硷紝鐢熸垚鏂扮殑id
     const maxId = this.list.reduce((max, item) => {
       return item.id > max ? item.id : max;
     }, 0);
@@ -56,7 +56,7 @@ class OrderService {
   }
   
 
-  // 将数据存入到localstorage中
+  // 灏嗘暟鎹瓨鍏ュ埌localstorage涓?
   _saveData() {
     localStorage.setItem('orderList', JSON.stringify(this.list));
   }

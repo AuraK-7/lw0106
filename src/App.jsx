@@ -1,13 +1,49 @@
-import './App.css';
-import { Outlet } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import AdminLayout from './components/AdminLayout';
+import { AdminRoute } from './components/AdminRoute';
+import FrontLayout from './components/FrontLayout';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import HomePage from './pages/HomePage';
+import CategoryPage from './pages/CategoryPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import PayPage from './pages/PayPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import UserAuthPage from './pages/UserAuthPage';
+import NotFoundPage from './pages/NotFoundPage';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import { CategoryManagePage, OrderManagePage, PermissionPage, ProductManagePage } from './pages/admin/AdminModules';
 
-function App() {
+// 根组件负责组织前后台两套路由。
+export default function App() {
   return (
-    <div className="App">
-      <h1> APP Page</h1>
-      <Outlet />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<FrontLayout />} path="/">
+          <Route element={<HomePage />} index />
+          <Route element={<CategoryPage />} path="category" />
+          <Route element={<ProductDetailPage />} path="product/:id" />
+          <Route element={<ProtectedRoute><CartPage /></ProtectedRoute>} path="cart" />
+          <Route element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} path="checkout" />
+          <Route element={<ProtectedRoute><PayPage /></ProtectedRoute>} path="pay/:id" />
+          <Route element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} path="order/:id" />
+          <Route element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} path="profile" />
+        </Route>
+        <Route element={<UserAuthPage />} path="/login" />
+        <Route element={<AdminLoginPage />} path="/admin/login" />
+        <Route element={<AdminRoute><AdminLayout /></AdminRoute>} path="/admin">
+          <Route element={<AdminDashboardPage />} index />
+          <Route element={<AdminRoute permission="products"><ProductManagePage /></AdminRoute>} path="products" />
+          <Route element={<AdminRoute permission="categories"><CategoryManagePage /></AdminRoute>} path="categories" />
+          <Route element={<AdminRoute permission="orders"><OrderManagePage /></AdminRoute>} path="orders" />
+          <Route element={<AdminRoute permission="permissions"><PermissionPage /></AdminRoute>} path="permissions" />
+        </Route>
+        <Route element={<Navigate replace to="/" />} path="/home" />
+        <Route element={<NotFoundPage />} path="*" />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

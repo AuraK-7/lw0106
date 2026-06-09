@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// Vite 配置文件，保持默认开发体验并便于课程作业演示。
 export default defineConfig({
-  plugins: [
-    react(),
-    babel({ presets: [reactCompilerPreset()] })
-  ],
-})
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+  },
+});
