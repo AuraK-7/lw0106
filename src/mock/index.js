@@ -21,8 +21,8 @@ export const banners = [
 ];
 
 export const categories = [
-  { id: 'cat_phone', name: '手机数码', description: '高性能手机、平板与智能设备', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=premium%20smartphone%20category%20cover%2C%20studio%20lighting%2C%20clean%20product%20composition&image_size=square_hd', active: true },
-  { id: 'cat_home', name: '智能家居', description: '提升居家幸福感的智能产品', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=smart%20home%20devices%20category%20cover%2C%20warm%20interior%2C%20minimal%20style&image_size=square_hd', active: true },
+  { id: 'cat_phone', name: '手机数码', description: '手机、平板与智能设备', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=premium%20smartphone%20category%20cover%2C%20studio%20lighting%2C%20clean%20product%20composition&image_size=square_hd', active: true },
+  { id: 'cat_home', name: '智能家居', description: '提升幸福感的智能产品', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=smart%20home%20devices%20category%20cover%2C%20warm%20interior%2C%20minimal%20style&image_size=square_hd', active: true },
   { id: 'cat_beauty', name: '美妆护肤', description: '人气护肤和彩妆精选', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=beauty%20skincare%20category%20cover%2C%20luxury%20editorial%2C%20soft%20light&image_size=square_hd', active: true },
   { id: 'cat_office', name: '办公学习', description: '学习办公场景高频好物', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=modern%20office%20desk%20setup%20category%20cover%2C%20clean%20stationery%20and%20laptop&image_size=square_hd', active: true },
   { id: 'cat_wear', name: '运动穿戴', description: '运动健康与穿戴设备', cover: 'https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=fitness%20wearable%20tech%20category%20cover%2C%20smartwatch%20and%20earbuds%2C%20dynamic%20scene&image_size=square_hd', active: true },

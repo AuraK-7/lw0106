@@ -165,6 +165,12 @@ export function getHotProducts(limit = 8) {
   return getProducts().all.slice(0, limit);
 }
 
+export function getNewProducts(limit = 4) {
+  return getProducts({ includeUnpublished: true }).all
+    .sort(function (a, b) { return a.id < b.id ? 1 : -1; })
+    .slice(0, limit);
+}
+
 export function getProductById(productId) {
   return getProducts({ includeUnpublished: true }).all.find(function (item) {
     return item.id === productId;
