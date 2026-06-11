@@ -171,32 +171,40 @@ export function getProductById(productId) {
   });
 }
 
-export function createProduct(payload) {
-  const list = readList(STORAGE_KEYS.products, initialMockData.products);
-  list.unshift({
+function normalizeProductPayload(payload) {
+  return {
     ...payload,
-    id: generateId('prod'),
     price: Number(payload.price),
     marketPrice: Number(payload.marketPrice),
     stock: Number(payload.stock),
     sales: Number(payload.sales || 0),
     published: Boolean(payload.published),
+  };
+}
+
+export function createProduct(payload) {
+  const list = readList(STORAGE_KEYS.products, initialMockData.products);
+  list.unshift({
+    ...normalizeProductPayload(payload),
+    id: generateId('prod'),
   });
   return writeList(STORAGE_KEYS.products, list);
 }
 
 export function updateProduct(productId, payload) {
-  const list = readList(STORAGE_KEYS.products, initialMockData.products).map(function (item) {
-    return item.id === productId
-      ? {
-          ...item,
-          ...payload,
-          price: Number(payload.price),
-          marketPrice: Number(payload.marketPrice),
-          stock: Number(payload.stock),
-        }
-      : item;
+  const list = readList(STORAGE_KEYS.products, initialMockData.products);
+  const index = list.findIndex(function (item) {
+    return item.id === productId;
   });
+
+  if (index < 0) {
+    throw new Error('商品不存在');
+  }
+
+  list[index] = {
+    ...list[index],
+    ...normalizeProductPayload(payload),
+  };
   return writeList(STORAGE_KEYS.products, list);
 }
 
@@ -224,9 +232,16 @@ export function createCategory(payload) {
 }
 
 export function updateCategory(categoryId, payload) {
-  const list = readList(STORAGE_KEYS.categories, initialMockData.categories).map(function (item) {
-    return item.id === categoryId ? { ...item, ...payload, active: Boolean(payload.active) } : item;
+  const list = readList(STORAGE_KEYS.categories, initialMockData.categories);
+  const index = list.findIndex(function (item) {
+    return item.id === categoryId;
   });
+
+  if (index < 0) {
+    throw new Error('分类不存在');
+  }
+
+  list[index] = { ...list[index], ...payload, active: Boolean(payload.active) };
   return writeList(STORAGE_KEYS.categories, list);
 }
 
@@ -421,14 +436,48 @@ export function createOrder(payload) {
   const products = readList(STORAGE_KEYS.products, initialMockData.products);
   const orders = readList(STORAGE_KEYS.orders, initialMockData.orders);
   const cartItems = readList(STORAGE_KEYS.cartItems, initialMockData.cartItems);
+  const addresses = readList(STORAGE_KEYS.addresses, initialMockData.addresses);
   const summary = buildOrderSummary(payload.items);
+  const address = addresses.find(function (item) {
+    return item.id === payload.addressId && item.userId === payload.userId;
+  });
+
+  if (!address) {
+    throw new Error('收货地址不存在');
+  }
+
+  if (!Array.isArray(payload.items) || !payload.items.length) {
+    throw new Error('订单商品不能为空');
+  }
+
+  payload.items.forEach(function (item) {
+    if (!item || Number(item.quantity) <= 0) {
+      throw new Error('商品数量必须大于0');
+    }
+
+    const product = products.find(function (current) {
+      return current.id === item.productId;
+    });
+
+    if (!product) {
+      throw new Error('商品不存在，无法下单');
+    }
+
+    if (!product.published) {
+      throw new Error('商品已下架，无法下单');
+    }
+
+    if (product.stock < Number(item.quantity)) {
+      throw new Error('库存不足，无法下单');
+    }
+  });
 
   payload.items.forEach(function (item) {
     const product = products.find(function (current) {
       return current.id === item.productId;
     });
     if (product) {
-      product.stock = Math.max(0, product.stock - item.quantity);
+      product.stock -= item.quantity;
       product.sales += item.quantity;
     }
   });
@@ -443,14 +492,17 @@ export function createOrder(payload) {
     createdAt: new Date().toLocaleString('zh-CN', { hour12: false }),
     source: payload.source,
     items: payload.items.map(function (item) {
+      const product = products.find(function (current) {
+        return current.id === item.productId;
+      });
       return {
         id: generateId('order_item'),
         productId: item.productId,
-        productName: item.product.name,
+        productName: product.name,
         spec: item.spec,
-        price: item.product.price,
+        price: product.price,
         quantity: item.quantity,
-        cover: item.product.cover,
+        cover: product.cover,
       };
     }),
   };
