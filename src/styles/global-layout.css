@@ -1,0 +1,200 @@
+/* =============================================
+   Layout System
+   ============================================= */
+
+/* ========================================
+   Container
+   ======================================== */
+.container {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding-left: max(22px, env(safe-area-inset-left));
+  padding-right: max(22px, env(safe-area-inset-right));
+}
+
+.container-narrow {
+  max-width: 980px;
+}
+
+.container-wide {
+  max-width: 1200px;
+}
+
+/* ========================================
+   Page Shell
+   ======================================== */
+.page-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+  min-height: calc(100vh - 180px);
+  background: var(--color-bg-secondary);
+}
+
+/* ========================================
+   Section Stack
+   ======================================== */
+.page-section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ========================================
+   Flex Grid
+   ======================================== */
+.row {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+
+.column {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+/* Column widths */
+.col-1  { flex-basis: 8.33333%; max-width: 8.33333%; }
+.col-2  { flex-basis: 16.66667%; max-width: 16.66667%; }
+.col-3  { flex-basis: 25%; max-width: 25%; }
+.col-4  { flex-basis: 33.33333%; max-width: 33.33333%; }
+.col-5  { flex-basis: 41.66667%; max-width: 41.66667%; }
+.col-6  { flex-basis: 50%; max-width: 50%; }
+.col-7  { flex-basis: 58.33333%; max-width: 58.33333%; }
+.col-8  { flex-basis: 66.66667%; max-width: 66.66667%; }
+.col-9  { flex-basis: 75%; max-width: 75%; }
+.col-10 { flex-basis: 83.33333%; max-width: 83.33333%; }
+.col-11 { flex-basis: 91.66667%; max-width: 91.66667%; }
+.col-12 { flex-basis: 100%; max-width: 100%; }
+
+/* Responsive columns */
+@media (max-width: 1023px) and (max-device-width: 736px) {
+  .col-sm-1  { flex-basis: 8.33333%; max-width: 8.33333%; }
+  .col-sm-2  { flex-basis: 16.66667%; max-width: 16.66667%; }
+  .col-sm-3  { flex-basis: 25%; max-width: 25%; }
+  .col-sm-4  { flex-basis: 33.33333%; max-width: 33.33333%; }
+  .col-sm-5  { flex-basis: 41.66667%; max-width: 41.66667%; }
+  .col-sm-6  { flex-basis: 50%; max-width: 50%; }
+  .col-sm-7  { flex-basis: 58.33333%; max-width: 58.33333%; }
+  .col-sm-8  { flex-basis: 66.66667%; max-width: 66.66667%; }
+  .col-sm-9  { flex-basis: 75%; max-width: 75%; }
+  .col-sm-10 { flex-basis: 83.33333%; max-width: 83.33333%; }
+  .col-sm-11 { flex-basis: 91.66667%; max-width: 91.66667%; }
+  .col-sm-12 { flex-basis: 100%; max-width: 100%; }
+}
+
+/* ========================================
+   CSS Grid
+   ======================================== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--spacing-lg);
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+}
+
+/* Grid column spans */
+.g-col-1  { grid-column: span 1; }
+.g-col-2  { grid-column: span 2; }
+.g-col-3  { grid-column: span 3; }
+.g-col-4  { grid-column: span 4; }
+.g-col-5  { grid-column: span 5; }
+.g-col-6  { grid-column: span 6; }
+.g-col-7  { grid-column: span 7; }
+.g-col-8  { grid-column: span 8; }
+.g-col-9  { grid-column: span 9; }
+.g-col-10 { grid-column: span 10; }
+.g-col-11 { grid-column: span 11; }
+.g-col-12 { grid-column: span 12; }
+
+@media (max-width: 1023px) and (max-device-width: 736px) {
+  .g-col-sm-1  { grid-column: span 1; }
+  .g-col-sm-2  { grid-column: span 2; }
+  .g-col-sm-3  { grid-column: span 3; }
+  .g-col-sm-4  { grid-column: span 4; }
+  .g-col-sm-5  { grid-column: span 5; }
+  .g-col-sm-6  { grid-column: span 6; }
+  .g-col-sm-7  { grid-column: span 7; }
+  .g-col-sm-8  { grid-column: span 8; }
+  .g-col-sm-9  { grid-column: span 9; }
+  .g-col-sm-10 { grid-column: span 10; }
+  .g-col-sm-11 { grid-column: span 11; }
+  .g-col-sm-12 { grid-column: span 12; }
+}
+
+/* ========================================
+   Flex Helpers
+   ======================================== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+/* ========================================
+   Spacing Utilities
+   ======================================== */
+.m-0 { margin: 0; }
+.mt-0 { margin-top: 0; }
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.p-0 { padding: 0; }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+/* ========================================
+   Text Alignment
+   ======================================== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* ========================================
+   Responsive Breakpoint Helpers
+   ======================================== */
+/* Mobile-first: small applies to all */
+.hidden { display: none; }
+
+/* Desktop: ≥ 834px */
+@media (min-width: 834px) {
+  .hidden-desktop { display: none; }
+}
+
+/* Mobile: < 834px */
+@media (max-width: 833px) {
+  .hidden-mobile { display: none; }
+}
+
+/* Small phone: ≤ 736px  */
+@media (max-width: 736px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

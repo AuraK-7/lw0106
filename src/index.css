@@ -1,67 +1,217 @@
-:root {
-  color: #1f2937;
-  background: #f5f7fb;
-  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+/* Ant Design Menu overrides*/
+.ant-menu-horizontal {
+  border-bottom: none !important;
+  background: transparent !important;
 }
-* { box-sizing: border-box; }
-body { margin: 0; background: linear-gradient(180deg, #f6f8fc 0%, #eef3f9 100%); }
-a { color: inherit; text-decoration: none; }
-.container { width: min(1200px, calc(100vw - 32px)); margin: 0 auto; }
-.page-shell { min-height: 100vh; }
-.page-content { padding: 24px 0 48px; }
-.page-section-stack { display: flex; flex-direction: column; gap: 16px; }
-.section-card { border-radius: 18px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06); }
-.section-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-.front-header { position: sticky; top: 0; z-index: 20; background: rgba(9, 20, 42, 0.92); backdrop-filter: blur(10px); }
-.front-header-inner { display: flex; align-items: center; gap: 20px; height: 72px; }
-.brand-title { margin: 0 !important; color: #fff !important; cursor: pointer; }
-.header-search { flex: 1; }
-.welcome-text { color: #fff; }
-.front-nav-wrap { background: #fff; border-bottom: 1px solid #edf2f7; }
-.site-footer { text-align: center; color: #64748b; background: transparent; }
-.hero-slide { position: relative; overflow: hidden; border-radius: 20px; height: 380px; }
-.hero-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; background: linear-gradient(180deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.7)); color: #fff; }
-.hero-overlay h2 { margin: 0 0 12px; font-size: 34px; }
-.hero-overlay p { margin: 0; font-size: 16px; }
-.category-cover, .product-cover { width: 100%; height: 220px; object-fit: cover; }
-.product-card-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.price-text { color: #cf1322; font-weight: 700; margin-right: 8px; }
-.large-price { font-size: 28px; }
-.tag-group { margin-top: 16px; }
-.pagination-wrap { margin-top: 20px; display: flex; justify-content: center; }
-.detail-image { width: 100%; border-radius: 18px; height: 420px; object-fit: cover; }
-.price-panel { display: flex; align-items: center; gap: 12px; }
-.spec-group { display: flex; flex-wrap: wrap; margin-top: 12px; }
-.qty-wrap { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
-.table-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 12px; }
-.muted-text { color: #64748b; font-size: 12px; }
-.checkout-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.address-card { border-radius: 16px; }
-.address-radio-group { width: 100%; }
-.pay-card { max-width: 760px; margin: 0 auto; }
-.pay-panel { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 24px; border-radius: 18px; background: linear-gradient(135deg, #f0f5ff, #fff7e6); }
-.pay-icon { font-size: 64px; color: #1677ff; }
-.order-summary { margin-top: 16px; text-align: right; color: #cf1322; font-size: 18px; font-weight: 700; }
-.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px; background: radial-gradient(circle at top left, #dbeafe, #eef2ff 48%, #f8fafc 100%); }
-.auth-card { width: min(560px, 100%); border-radius: 24px; box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12); }
-.admin-auth-card { width: min(520px, 100%); }
-.tips-card { margin-top: 16px; }
-.admin-shell { min-height: 100vh; }
-.admin-sider { background: linear-gradient(180deg, #0f172a, #172554) !important; }
-.admin-logo { color: #fff; font-size: 20px; font-weight: 700; padding: 24px; }
-.admin-header { background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); }
-.admin-content { padding: 24px; }
-.filter-row { margin-bottom: 16px; }
-.simple-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
-.simple-input { width: 100%; padding: 12px 14px; border: 1px solid #d6dce7; border-radius: 10px; outline: none; font: inherit; }
-.simple-checkbox { display: flex; align-items: center; gap: 8px; color: #334155; }
-.permission-pill { padding: 6px 12px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; }
-.mini-status { padding: 2px 8px; border-radius: 999px; background: #fff7e6; color: #d46b08; font-size: 12px; }
-@media (max-width: 900px) {
-  .front-header-inner { height: auto; padding: 16px 0; flex-wrap: wrap; }
-  .header-search { width: 100%; }
-  .hero-slide { height: 260px; }
-  .simple-form-grid { grid-template-columns: 1fr; }
-  .admin-content { padding: 16px; }
+
+.ant-menu-item {
+  font-family: var(--font-family-base) !important;
+  font-size: var(--font-size-footnote) !important;
+  letter-spacing: -0.016em !important;
+}
+
+.ant-menu-item-selected {
+  font-weight: var(--font-weight-semibold) !important;
+}
+
+/* Ant Design Card overrides */
+.ant-card {
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: none !important;
+}
+
+.ant-card-hoverable:hover {
+  box-shadow: var(--shadow-card-hover) !important;
+  transform: translateY(-2px);
+}
+
+/* Ant Design Button overrides */
+.ant-btn-primary {
+  border-radius: var(--radius-button) !important;
+  font-size: var(--font-size-body) !important;
+  line-height: 1.17648 !important;
+}
+
+.ant-btn-default {
+  border-radius: var(--radius-button) !important;
+  font-size: var(--font-size-body) !important;
+}
+
+.ant-btn-link {
+  padding: 4px 8px !important;
+}
+
+.ant-btn-sm {
+  font-size: var(--font-size-footnote) !important;
+}
+
+/* Ant Design Input overrides */
+.ant-input,
+.ant-input-search .ant-input {
+  border-radius: var(--radius-input) !important;
+}
+
+.ant-input-search .ant-input-search-button {
+  border-radius: 0 var(--radius-input) var(--radius-input) 0 !important;
+}
+
+.ant-input-affix-wrapper {
+  border-radius: var(--radius-input) !important;
+  border-color: var(--color-border) !important;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: var(--color-border) !important;
+}
+
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: var(--color-accent-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15) !important;
+}
+
+/* Ant Design Tag overrides */
+.ant-tag {
+  border-radius: var(--radius-tag) !important;
+  font-size: var(--font-size-footnote) !important;
+  padding: 2px 10px !important;
+  border: none !important;
+  line-height: 1.28577 !important;
+}
+
+/* Ant Design Table */
+.ant-table-wrapper .ant-table-thead > tr > th {
+  font-family: var(--font-family-base) !important;
+  font-size: var(--font-size-footnote) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  color: var(--color-text-secondary) !important;
+  background: var(--color-table-header) !important;
+  border-bottom: 1px solid var(--color-table-border) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--color-table-border) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr:hover > td {
+  background: var(--color-table-row-hover) !important;
+}
+
+/* Ant Design Tabs */
+.ant-tabs {
+  font-family: var(--font-family-base) !important;
+}
+
+.ant-tabs-tab {
+  font-size: var(--font-size-footnote) !important;
+}
+
+/* Ant Design Descriptions */
+.ant-descriptions {
+  font-family: var(--font-family-base) !important;
+}
+
+/* Ant Design Radio button style (spec selector) */
+.ant-radio-button-wrapper {
+  border-radius: var(--radius-button) !important;
+  font-family: var(--font-family-base) !important;
+  font-size: var(--font-size-footnote) !important;
+  line-height: 1.28577 !important;
+  height: auto !important;
+  padding: 4px 16px !important;
+}
+
+.ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  background: var(--color-text-primary) !important;
+  border-color: var(--color-text-primary) !important;
+}
+
+/* Ant Design Pagination */
+.ant-pagination {
+  font-family: var(--font-family-base) !important;
+}
+
+.ant-pagination .ant-pagination-item {
+  border-radius: var(--radius-pill) !important;
+  font-size: var(--font-size-footnote) !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  background: var(--color-text-primary) !important;
+  border-color: var(--color-text-primary) !important;
+}
+
+/* Ant Design Layout */
+.ant-layout {
+  background: transparent !important;
+}
+
+/* Ant Design Sider */
+.ant-layout-sider {
+  background: var(--color-bg-dark) !important;
+}
+
+/* Ant Design Menu (dark) */
+.ant-menu-dark {
+  background: transparent !important;
+}
+
+/* Ant Design Switch */
+.ant-switch {
+  background: var(--color-switch-off) !important;
+}
+
+.ant-switch-checked {
+  background: var(--color-switch-on) !important;
+}
+
+/* Ant Design Select */
+.ant-select-selector {
+  border-radius: var(--radius-input) !important;
+  font-family: var(--font-family-base) !important;
+}
+
+/* Ant Design Carousel dots */
+.ant-carousel .slick-dots {
+  bottom: 24px !important;
+  text-align: left !important;
+  padding-left: max(22px, env(safe-area-inset-left)) !important;
+}
+
+.ant-carousel .slick-dots li {
+  width: 8px !important;
+  height: 8px !important;
+  margin: 0 6px !important;
+}
+
+.ant-carousel .slick-dots li button {
+  width: 8px !important;
+  height: 8px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-radius: 50% !important;
+  opacity: 1 !important;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background: #fff !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+}
+
+/* Ant Design Statistic */
+.ant-statistic-title {
+  font-size: var(--font-size-footnote) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* Ant Design Result */
+.ant-result-title {
+  font-family: var(--font-family-display) !important;
+}
+
+/* Ant Design Form */
+.ant-form-item-label > label {
+  font-size: var(--font-size-footnote) !important;
+  color: var(--color-text-secondary) !important;
 }

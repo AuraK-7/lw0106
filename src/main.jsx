@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'antd/dist/reset.css';
+import './styles/global-theme.css';
+import './styles/global-layout.css';
+import './styles/global-components.css';
 import './index.css';
 import App from './App';
 import { AdminProvider } from './contexts/AdminContext';

@@ -1,0 +1,290 @@
+/* =============================================
+   Design System (Theme)
+   ============================================= */
+
+:root {
+  /* ---- Colors ---- */
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #86868b;
+  --color-text-tertiary: #6e6e73;
+  --color-text-inverse: #ffffff;
+  --color-link: #06c;
+  --color-link-hover: #06c;
+  --color-link-visited: #06c;
+  --color-accent-blue: #0071e3;
+  --color-accent-blue-hover: #0077ed;
+  --color-accent-blue-active: #006edb;
+  --color-accent-blue-focus: #0071e3;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f7;
+  --color-bg-tertiary: #e8e8ed;
+  --color-bg-overlay: rgba(250, 250, 252, 0.8);
+  --color-bg-card: #ffffff;
+  --color-bg-section: #fafafc;
+  --color-bg-dark: #1d1d1f;
+  --color-bg-dark-secondary: #161617;
+  --color-border: #d2d2d7;
+  --color-border-light: #e8e8ed;
+  --color-border-focus: #0071e3;
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-error: #ff453a;
+  --color-info: #0071e3;
+  --color-price: #1d1d1f;
+  --color-price-discount: #cf1322;
+  --color-star: #ff9f0a;
+
+  /* ---- Typography ---- */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family-mono: 'SF Mono', 'SF Pro Mono', 'Menlo', 'Courier New', monospace;
+  --font-family-cjk: 'PingFang SC', 'SF Pro SC', 'Microsoft YaHei', sans-serif;
+
+  /* Font sizes */
+  --font-size-caption: 12px;
+  --font-size-footnote: 14px;
+  --font-size-body: 17px;
+  --font-size-callout: 16px;
+  --font-size-subheadline: 15px;
+  --font-size-headline: 17px;
+  --font-size-title-3: 20px;
+  --font-size-title-2: 22px;
+  --font-size-title-1: 28px;
+  --font-size-large-title: 34px;
+  --font-size-hero: 40px;
+  --font-size-display: 48px;
+
+  /* Line heights */
+  --line-height-caption: 1.33337;
+  --line-height-footnote: 1.28577;
+  --line-height-body: 1.47059;
+  --line-height-headline: 1.23536;
+  --line-height-title-3: 1.2;
+  --line-height-title-2: 1.18182;
+  --line-height-title-1: 1.14286;
+  --line-height-large-title: 1.11765;
+  --line-height-hero: 1.1;
+  --line-height-display: 1.08333;
+
+  /* Letter spacing */
+  --letter-spacing-body: -0.022em;
+  --letter-spacing-headline: -0.022em;
+  --letter-spacing-caption: -0.01em;
+  --letter-spacing-footnote: -0.016em;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---- Border Radius ---- */
+  --radius-button: 980px;
+  --radius-button-secondary: 980px;
+  --radius-button-small: 980px;
+  --radius-card: 18px;
+  --radius-card-small: 14px;
+  --radius-input: 12px;
+  --radius-tag: 999px;
+  --radius-pill: 999px;
+  --radius-modal: 18px;
+  --radius-switch: 16px;
+  --radius-skeleton: 6px;
+  --radius-section: 20px;
+
+  --color-overlay-backdrop: rgba(0, 0, 0, 0.32);
+  --color-skeleton: #e8e8ed;
+  --color-skeleton-shine: #f5f5f7;
+  --color-badge: #ff3b30;
+  --color-table-header: #f5f5f7;
+  --color-table-border: #e8e8ed;
+  --color-table-row-hover: #fafafc;
+  --color-switch-off: #e8e8ed;
+  --color-switch-on: #30d158;
+  --color-select-bg: #f5f5f7;
+  --color-mini-status-bg: #fff7e6;
+  --color-mini-status-text: #d46b08;
+
+  /* ---- Shadows ---- */
+  --shadow-card: 0 2px 14px rgba(0, 0, 0, 0.04), 0 4px 24px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 24px rgba(0, 0, 0, 0.08), 0 8px 40px rgba(0, 0, 0, 0.06);
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-button: none;
+  --shadow-button-hover: none;
+
+  --shadow-elevation-low: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-elevation-medium: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* ---- Backdrop Filters ---- */
+  --blur-nav: saturate(180%) blur(20px);
+  --blur-modal: saturate(180%) blur(40px);
+
+  /* ---- Spacing ---- */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-xxxl: 64px;
+
+  /* ---- Transitions ---- */
+  --transition-fast: 0.24s cubic-bezier(0.4, 0, 0.6, 1);
+  --transition-normal: 0.32s cubic-bezier(0.4, 0, 0.6, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* ---- Z-Index Layers ---- */
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  /* ---- Focus Ring ---- */
+  --focus-color: #0071e3;
+  --focus-offset: 1px;
+}
+
+/* --- Global Reset & Base Styles --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  font-size: 106.25%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+}
+
+body, button, input, select, textarea {
+  font-synthesis: none;
+  -moz-font-feature-settings: 'kern';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+h1 { font-size: var(--font-size-hero); line-height: var(--line-height-hero); letter-spacing: 0; }
+h2 { font-size: var(--font-size-large-title); line-height: var(--line-height-large-title); letter-spacing: 0; }
+h3 { font-size: var(--font-size-title-1); line-height: var(--line-height-title-1); }
+h4 { font-size: var(--font-size-title-2); line-height: var(--line-height-title-2); }
+h5 { font-size: var(--font-size-title-3); line-height: var(--line-height-title-3); }
+
+p { margin: 0; }
+p + p { margin-top: var(--spacing-md); }
+
+/* --- Links --- */
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  letter-spacing: inherit;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+/* --- Images --- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Lists --- */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* --- Focus Ring (Global) --- */
+:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+/* Remove focus ring for mouse/touch interactions */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* --- Selection --- */
+::selection {
+  background-color: var(--color-accent-blue);
+  color: var(--color-text-inverse);
+}
+
+/* --- Utility: Visually Hidden --- */
+.visuallyhidden {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(0 0 99.9% 99.9%);
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  padding: 0;
+  border: 0;
+}
+
+/* --- Utility: Nowrap --- */
+.nowrap {
+  display: inline-block;
+  text-decoration: inherit;
+  white-space: nowrap;
+}
+
+/* --- Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Ant Design Override Compatibility --- */
+.ant-btn {
+  font-family: var(--font-family-base) !important;
+}
+.ant-typography {
+  font-family: var(--font-family-base) !important;
+}
+.ant-card {
+  font-family: var(--font-family-base) !important;
+}
