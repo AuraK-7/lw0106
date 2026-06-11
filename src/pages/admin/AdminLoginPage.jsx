@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   const redirectTo = location.state?.from?.pathname || '/admin';
 
   async function handleFinish(values) {
-    try { await login(values); message.success('后台登录成功'); navigate(redirectTo, { replace: true }); } catch (error) { message.error(error.message); }
+    try { await login(values); message.success('后台登录成功'); setTimeout(function () { navigate(redirectTo, { replace: true }); }, 0); } catch (error) { message.error(error.message); }
   }
 
   return (

@@ -51,9 +51,9 @@ export default function ProductDetailPage() {
             </div>
             <div>
               <Typography.Text strong>购买数量</Typography.Text>
-              <div className="qty-wrap"><InputNumber max={product.stock} min={1} value={quantity} onChange={setQuantity} /><Typography.Text type="secondary">库存：{product.stock}</Typography.Text></div>
+              <div className="qty-wrap"><InputNumber min={0} value={quantity} onChange={setQuantity} /><Typography.Text type="secondary">库存：{product.stock}</Typography.Text></div>
             </div>
-            <Space size="large"><Button size="large" onClick={handleAddCart}>加入购物车</Button><Button size="large" type="primary" onClick={handleBuyNow}>立即购买</Button></Space>
+            <Space size="large"><Button size="large" onClick={function () { if (quantity <= 0) { message.warning('商品数量必须大于0'); return; } if (quantity > product.stock) { message.warning('库存不足，无法下单'); return; } handleAddCart(); }}>加入购物车</Button><Button size="large" type="primary" onClick={function () { if (quantity <= 0) { message.warning('商品数量必须大于0'); return; } if (quantity > product.stock) { message.warning('库存不足，无法下单'); return; } handleBuyNow(); }}>立即购买</Button></Space>
             <Divider />
             <Descriptions bordered column={1} size="small"><Descriptions.Item label="所属分类">{product.categoryName}</Descriptions.Item><Descriptions.Item label="销量">{product.sales}</Descriptions.Item><Descriptions.Item label="商品详情">{product.detail}</Descriptions.Item></Descriptions>
           </Space>

@@ -16,7 +16,7 @@ export default function CartPage() {
   const columns = [
     { title: '商品', dataIndex: 'product', render(product, record) { return <Space><img alt={product.name} className="table-thumb" src={product.cover} /><div><Typography.Text strong>{product.name}</Typography.Text><div className="muted-text">{record.spec}</div></div></Space>; } },
     { title: '单价', dataIndex: 'product', render(product) { return formatPrice(product.price); } },
-    { title: '数量', dataIndex: 'quantity', render(quantity, record) { return <InputNumber max={record.product.stock} min={1} value={quantity} onChange={function (value) { updateCartItem(record.id, { quantity: value || 1 }); }} />; } },
+    { title: '数量', dataIndex: 'quantity', render(quantity, record) { return <InputNumber min={0} value={quantity} onChange={function (value) { const nextValue = Number(value); if (nextValue === 0) { message.warning('商品数量必须大于0'); updateCartItem(record.id, { quantity: 1 }); return; } if (nextValue > record.product.stock) { message.warning('库存不足，已自动调整为最大库存'); updateCartItem(record.id, { quantity: record.product.stock }); return; } updateCartItem(record.id, { quantity: value }); }} />; } },
     { title: '小计', dataIndex: 'amount', render(amount) { return <Typography.Text strong>{formatPrice(amount)}</Typography.Text>; } },
     { title: '操作', render(_, record) { return <Popconfirm title="确认删除该商品吗？" onConfirm={function () { removeCartItems([record.id]); }}><Button danger type="link">删除</Button></Popconfirm>; } },
   ];
