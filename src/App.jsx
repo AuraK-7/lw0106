@@ -10,6 +10,7 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PayPage from './pages/PayPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import OrderListPage from './pages/OrderListPage';
 import ProfilePage from './pages/ProfilePage';
 import UserAuthPage from './pages/UserAuthPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -30,10 +31,11 @@ export default function App() {
           <Route element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} path="checkout" />
           <Route element={<ProtectedRoute><PayPage /></ProtectedRoute>} path="pay/:id" />
           <Route element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} path="order/:id" />
+          <Route element={<ProtectedRoute><OrderListPage /></ProtectedRoute>} path="orders" />
           <Route element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} path="profile" />
+          <Route element={<UserAuthPage />} path="login" />
+          <Route element={<AdminLoginPage />} path="admin/login" />
         </Route>
-        <Route element={<UserAuthPage />} path="/login" />
-        <Route element={<AdminLoginPage />} path="/admin/login" />
         <Route element={<AdminRoute><AdminLayout /></AdminRoute>} path="/admin">
           <Route element={<AdminDashboardPage />} index />
           <Route element={<AdminRoute permission="products"><ProductManagePage /></AdminRoute>} path="products" />

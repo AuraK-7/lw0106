@@ -317,6 +317,18 @@ export function logoutUser() {
   emitMallChange();
 }
 
+export function updateCurrentUserProfile(payload) {
+  const userId = storage.get(STORAGE_KEYS.userSession, null);
+  if (!userId) throw new Error('用户未登录');
+  const users = readList(STORAGE_KEYS.users, initialMockData.users);
+  const index = users.findIndex(function (item) { return item.id === userId; });
+  if (index < 0) throw new Error('用户不存在');
+  users[index] = { ...users[index], ...payload };
+  writeList(STORAGE_KEYS.users, users);
+  emitMallChange();
+  return users[index];
+}
+
 export function getAddresses(userId) {
   return readList(STORAGE_KEYS.addresses, initialMockData.addresses).filter(function (item) {
     return item.userId === userId;
