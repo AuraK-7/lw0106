@@ -25,14 +25,18 @@ jobs:
       - name: Add Gerrit + GitHub host keys
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -p 29418 gerrit.lilingkun.com >> ~/.ssh/known_hosts 2>/dev/null
-          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -T 10 -p 29418 gerrit.lilingkun.com >> ~/.ssh/known_hosts 2>/dev/null || \
+            echo "::warning::gerrit.lilingkun.com host key scan failed, will rely on StrictHostKeyChecking=accept-new"
+          ssh-keyscan -T 10 github.com >> ~/.ssh/known_hosts 2>/dev/null || \
+            echo "::warning::github.com host key scan failed, will rely on StrictHostKeyChecking=accept-new"
 
       - name: Switch origin to SSH
         run: |
           git remote set-url origin git@github.com:AuraK-7/lw0106.git
 
       - name: Fetch from Gerrit
+        env:
+          GIT_SSH_COMMAND: ssh -o StrictHostKeyChecking=accept-new
         run: |
           git remote add gerrit ssh://23301132@gerrit.lilingkun.com:29418/LW-01-06 2>/dev/null || true
           git fetch gerrit master
