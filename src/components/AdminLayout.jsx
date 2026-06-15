@@ -20,21 +20,30 @@ export default function AdminLayout() {
   ];
 
   const menuItems = allMenus.filter(function (item) { return permissions.includes(item.permission); });
-  const selectedKey = menuItems.find(function (item) { return location.pathname === item.key || location.pathname.startsWith(item.key + '/'); })?.key || '/admin';
+  const selectedKey = menuItems.find(function (item) {
+    if (location.pathname === item.key) return true;
+    if (item.key === '/admin') return false;
+    return location.pathname.startsWith(item.key + '/');
+  })?.key || menuItems[0]?.key || '/admin';
 
   return (
-    <Layout className="admin-shell">
-      <Sider breakpoint="lg" className="admin-sider" width={220}>
+    <Layout className="admin-shell" style={{ minHeight: '100vh' }}>
+      <Sider breakpoint="lg" className="admin-sider" style={{ minHeight: '100vh' }} width={220}>
         <div className="admin-logo">商城管理后台</div>
         <Menu items={menuItems} mode="inline" selectedKeys={[selectedKey]} theme="dark" onClick={function (info) { navigate(info.key); }} />
       </Sider>
-      <Layout>
-        <Header className="admin-header">
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header
+          className="admin-header"
+          style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', width: '100%' }}
+        >
           <Space>
             <Typography.Text>当前登录：{admin?.name}</Typography.Text>
             <Typography.Text type="secondary">{admin?.roleName}</Typography.Text>
           </Space>
-          <Button icon={<LogoutOutlined />} onClick={function () { logout(); navigate('/admin/login'); }}>退出后台</Button>
+          <Button icon={<LogoutOutlined />} onClick={function () { logout(); navigate('/admin/login'); }}>
+            退出后台
+          </Button>
         </Header>
         <Content className="admin-content"><Outlet /></Content>
       </Layout>

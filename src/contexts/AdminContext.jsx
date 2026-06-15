@@ -15,8 +15,19 @@ export function AdminProvider({ children }) {
     });
   }, []);
 
+  const login = async function (payload) {
+    const admin = loginAdmin(payload);
+    setAdmin(admin);
+    return admin;
+  };
+
+  const logout = function () {
+    logoutAdmin();
+    setAdmin(null);
+  };
+
   const value = useMemo(function () {
-    return { admin, isLogin: Boolean(admin), permissions: admin ? admin.permissions : [], login: loginAdmin, logout: logoutAdmin };
+    return { admin, isLogin: Boolean(admin), permissions: admin ? admin.permissions : [], login, logout };
   }, [admin]);
 
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
