@@ -2,6 +2,7 @@ import {
   EnvironmentOutlined,
   LogoutOutlined,
   OrderedListOutlined,
+  SearchOutlined,
   ShoppingCartOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -9,9 +10,7 @@ import { Badge, Dropdown, message } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
-import SearchBar from './SearchBar';
 
-// 前台布局
 export default function FrontLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,25 +22,24 @@ export default function FrontLayout() {
     { key: '/category', label: '分类' },
   ];
 
-  // ---- 用户下拉菜单项 ----
   const userMenuItems = [
     {
       key: 'profile',
       icon: <UserOutlined />,
       label: '个人中心',
-      onClick: () => navigate('/profile?section=overview'),
+      onClick: function () { navigate('/profile?section=overview'); },
     },
     {
       key: 'orders',
       icon: <OrderedListOutlined />,
       label: '我的订单',
-      onClick: () => navigate('/orders'),
+      onClick: function () { navigate('/orders'); },
     },
     {
       key: 'addresses',
       icon: <EnvironmentOutlined />,
       label: '地址管理',
-      onClick: () => navigate('/profile?section=addresses'),
+      onClick: function () { navigate('/profile?section=addresses'); },
     },
     { type: 'divider' },
     {
@@ -49,7 +47,7 @@ export default function FrontLayout() {
       icon: <LogoutOutlined />,
       label: '退出登录',
       danger: true,
-      onClick: () => {
+      onClick: function () {
         logout();
         message.success('已退出登录');
         navigate('/');
@@ -57,7 +55,6 @@ export default function FrontLayout() {
     },
   ];
 
-  // ---- 菜单样式 ----
   const menuConfig = {
     style: {
       minWidth: '220px',
@@ -68,20 +65,22 @@ export default function FrontLayout() {
 
   return (
     <div className="page-shell">
-
-      {/* 顶部导航 */}
       <header className="site-header">
         <div className="site-header-inner">
-          <a className="site-logo" href="/" onClick={function (e) { e.preventDefault(); navigate('/'); }}>
-            星舟商城
+          <a className="site-logo" href="/" onClick={function (event) { event.preventDefault(); navigate('/'); }}>
+            星舷商城
           </a>
 
           <nav className="site-nav">
             {navLinks.map(function (link) {
-              const active = location.pathname === link.key;
+              const active = link.key === '/' ? location.pathname === '/' : location.pathname.startsWith(link.key);
               return (
-                <a key={link.key} className={'site-nav-link' + (active ? ' active' : '')}
-                  href={link.key} onClick={function (e) { e.preventDefault(); navigate(link.key); }}>
+                <a
+                  key={link.key}
+                  className={'site-nav-link' + (active ? ' active' : '')}
+                  href={link.key}
+                  onClick={function (event) { event.preventDefault(); navigate(link.key); }}
+                >
                   {link.label}
                 </a>
               );
@@ -90,20 +89,18 @@ export default function FrontLayout() {
 
           <div className="site-actions">
             <button className="site-action-btn" onClick={function () { navigate('/category'); }} title="搜索">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M12 12L16.5 16.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <SearchOutlined style={{ fontSize: 18 }} />
             </button>
-
             <button className="site-action-btn" onClick={function () { navigate('/cart'); }} title="购物车">
               <Badge count={cartCount} size="small" offset={[2, -2]}>
                 <ShoppingCartOutlined style={{ fontSize: 18 }} />
               </Badge>
             </button>
-
             {user ? (
-              <Dropdown menu={menuConfig} trigger={['click']} placement="bottomRight"
+              <Dropdown
+                menu={menuConfig}
+                trigger={['click']}
+                placement="bottomRight"
                 overlayStyle={{
                   borderRadius: '16px',
                   boxShadow: '0 8px 30px rgba(0,0,0,.08)',
@@ -112,7 +109,7 @@ export default function FrontLayout() {
               >
                 <button
                   className="user-menu-trigger"
-                  onClick={function (e) { e.preventDefault(); }}
+                  onClick={function (event) { event.preventDefault(); }}
                 >
                   <span
                     className="user-menu-avatar"
@@ -126,35 +123,31 @@ export default function FrontLayout() {
                   </span>
                   <span className="user-menu-name">{user.nickname || user.username}</span>
                   <svg className="user-menu-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
               </Dropdown>
             ) : (
-              <a className="site-auth-link" href="/login" onClick={function (e) { e.preventDefault(); navigate('/login'); }}>
+              <a className="site-auth-link" href="/login" onClick={function (event) { event.preventDefault(); navigate('/login'); }}>
                 登录
               </a>
             )}
-
-            <a className="site-admin-link" href="/admin/login" onClick={function (e) { e.preventDefault(); navigate('/admin/login'); }}>
+            <a className="site-admin-link" href="/admin/login" onClick={function (event) { event.preventDefault(); navigate('/admin/login'); }}>
               管理
             </a>
           </div>
         </div>
       </header>
 
-      {/* 页面 */}
       <main className="page-content"><Outlet /></main>
 
-      {/* 页脚 */}
       <footer className="site-footer">
         <div className="container">
-          <p>星舟商城</p>
-          <p className="footer-copy">© 2026 星舟商城. All rights reserved.</p>
+          <p>星舷商城</p>
+          <p className="footer-copy">© 2026 星舷商城. All rights reserved.</p>
         </div>
       </footer>
 
-      {/* ======== 用户菜单样式（内联一次注入） ======== */}
       <style>{`
         .user-menu-trigger {
           display: inline-flex;
@@ -205,16 +198,13 @@ export default function FrontLayout() {
         .user-menu-trigger:hover .user-menu-chevron {
           opacity: 0.8;
         }
-
-        /* Dropdown 菜单项 Apple 风格 */
         .ant-dropdown-menu {
           border-radius: 16px;
           padding: 8px;
           box-shadow: 0 8px 30px rgba(0,0,0,.08);
         }
         .ant-dropdown-menu-item {
-          height: 44px;
-          line-height: 44px;
+          min-height: 44px;
           padding: 0 12px !important;
           border-radius: 10px;
           font-size: 14px;

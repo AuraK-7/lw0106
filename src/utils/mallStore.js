@@ -91,11 +91,13 @@ export function getCategories() {
   const categories = readCategories();
   const products = readProducts();
 
-  return categories.map(function (category) {
+  return categories.filter(function (category) {
+    return category.active !== false;
+  }).map(function (category) {
     return {
       ...category,
       productCount: products.filter(function (product) {
-        return product.categoryId === category.id;
+        return product.categoryId === category.id && product.published;
       }).length,
     };
   });
@@ -111,6 +113,7 @@ export function getProducts(options = {}) {
   const params = {
     keyword: '',
     categoryId: 'all',
+    sort: 'sales',
     page: 1,
     pageSize: 8,
     includeUnpublished: false,
@@ -145,13 +148,21 @@ export function getProducts(options = {}) {
   if (params.keyword) {
     const keyword = params.keyword.trim().toLowerCase();
     list = list.filter(function (item) {
-      return item.name.toLowerCase().includes(keyword) || item.description.toLowerCase().includes(keyword);
+      return item.name.toLowerCase().includes(keyword)
+        || item.description.toLowerCase().includes(keyword)
+        || item.detail.toLowerCase().includes(keyword)
+        || item.categoryName.toLowerCase().includes(keyword)
+        || (item.tags || []).join(' ').toLowerCase().includes(keyword);
     });
   }
 
-  list.sort(function (a, b) {
-    return b.sales - a.sales;
-  });
+  const sorters = {
+    sales: function (a, b) { return b.sales - a.sales; },
+    new: function (a, b) { return String(b.id).localeCompare(String(a.id)); },
+    priceAsc: function (a, b) { return a.price - b.price; },
+    priceDesc: function (a, b) { return b.price - a.price; },
+  };
+  list.sort(sorters[params.sort] || sorters.sales);
 
   const start = (params.page - 1) * params.pageSize;
   return {

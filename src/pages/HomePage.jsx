@@ -1,198 +1,145 @@
-import { useState, useEffect } from 'react';
+import {
+  ArrowUpOutlined,
+  CustomerServiceOutlined,
+  RightOutlined,
+  SafetyCertificateOutlined,
+  SwapOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RightOutlined, ArrowUpOutlined, SafetyCertificateOutlined, SwapOutlined, CustomerServiceOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import HeroCarousel from '../components/HeroCarousel';
+import ProductCard from '../components/ProductCard';
+import SearchBar from '../components/SearchBar';
 import { useMallData } from '../hooks/useMallData';
 import { getBanners, getCategories, getHotProducts, getNewProducts } from '../utils/mallStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const banners = useMallData(function(){return getBanners();},[]);
-  const categories = useMallData(function(){return getCategories();},[]);
-  const hot = useMallData(function(){return getHotProducts(8);},[]);
-  const newest = useMallData(function(){
-    var all = getNewProducts(12);
-    var hotIds = hot.map(function(x){return x.id;});
-    return all.filter(function(x){return !hotIds.includes(x.id);}).slice(0, 4);
-  }, [hot]);
-  const [showBack, setShowBack] = useState(false);
+  const banners = useMallData(function () { return getBanners(); }, []);
+  const categories = useMallData(function () { return getCategories(); }, []);
+  const hotProducts = useMallData(function () { return getHotProducts(8); }, []);
+  const newProducts = useMallData(function () { return getNewProducts(8); }, []);
+  const [showBackTop, setShowBackTop] = useState(false);
 
-  useEffect(function(){
-    function onScroll(){setShowBack(window.scrollY>600);}
-    window.addEventListener('scroll',onScroll,{passive:true});
-    return function(){window.removeEventListener('scroll',onScroll);};
-  },[]);
+  useEffect(function () {
+    function onScroll() {
+      setShowBackTop(window.scrollY > 520);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return function () { window.removeEventListener('scroll', onScroll); };
+  }, []);
+
+  function searchProducts(keyword) {
+    const params = keyword ? '?keyword=' + encodeURIComponent(keyword) : '';
+    navigate('/category' + params);
+  }
 
   return (
     <div className="hp">
+      <section className="home-search-band">
+        <div className="container">
+          <SearchBar onSearch={searchProducts} placeholder="搜索手机、耳机、家居好物" />
+        </div>
+      </section>
+
       <HeroCarousel banners={banners} />
 
-      {/* 服务保障 */}
-      {/* <div className="hp-strip">
+      <section className="hp-strip">
         <span><SafetyCertificateOutlined /> 正品保障</span>
         <span><SwapOutlined /> 7 天退换</span>
-        <span><CustomerServiceOutlined /> 在线客服</span>
-        <span><ThunderboltOutlined /> 极速发货</span>
-      </div> */}
+        <span><CustomerServiceOutlined /> 在线服务</span>
+        <span><ThunderboltOutlined /> 快速发货</span>
+      </section>
 
-      {/* 挑你所爱 */}
-      <div className="shelf">
+      <section className="shelf">
         <div className="shelf-header">
-          <h2 className="shelf-title">挑你所爱</h2>
-          <span className="shelf-subtitle">每一个品类，都值得细细挑选</span>
+          <h2 className="shelf-title">按品类逛</h2>
+          <span className="shelf-subtitle">从熟悉的场景开始挑选</span>
         </div>
         <div className="card-scroller">
-          {categories.map(function(c){
+          {categories.map(function (category) {
             return (
-              <div className="card-scroller-item" key={c.id}>
-                <a className="ccard ccard-40"
-                  onClick={function(e){e.preventDefault();navigate('/category?category='+c.id);}}
-                  href={'/category?category='+c.id}>
-                  <img className="ccard-image" alt={c.name} src={c.cover} />
+              <div className="card-scroller-item" key={category.id}>
+                <a
+                  className="ccard ccard-40"
+                  href={'/category?category=' + category.id}
+                  onClick={function (event) {
+                    event.preventDefault();
+                    navigate('/category?category=' + category.id);
+                  }}
+                >
+                  <img className="ccard-image" alt={category.name} src={category.cover} />
                   <div className="ccard-content">
-                    <div className="ccard-header">{c.name}</div>
-                    <div className="ccard-desc">{c.description}</div>
+                    <div className="ccard-header">{category.name}</div>
+                    <div className="ccard-desc">{category.description}</div>
                   </div>
                 </a>
               </div>
             );
           })}
-          {/* 全部分类入口 */}
           <div className="card-scroller-item">
-            <a className="ccard ccard-40" style={{display:'flex',alignItems:'center',justifyContent:'center',background:'#f0f0f0'}}
-              onClick={function(e){e.preventDefault();navigate('/category');}}
-              href="/category">
-              <div style={{textAlign:'center',color:'#888'}}>
-                <div style={{fontSize:'24px',marginBottom:'4px'}}>···</div>
-                <div style={{fontSize:'13px',fontWeight:500}}>全部分类</div>
-              </div>
-            </a>
+            <button className="ccard ccard-40 category-more-card" onClick={function () { navigate('/category'); }}>
+              <span>全部分类</span>
+              <RightOutlined />
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 中间促销横幅 */}
-      {/* <div className="hp-promo" onClick={function(){navigate('/category?keyword=手机');}}>
-        <div className="hp-promo-inner">
-          <span className="hp-promo-tag">品牌日</span>
-          <span className="hp-promo-text">热门手机 · 限时直降最高 ¥800</span>
-          <span className="hp-promo-link">去看看 <RightOutlined/></span>
+      <section className="shelf">
+        <div className="shelf-header shelf-header-row">
+          <div>
+            <h2 className="shelf-title">大家都在买</h2>
+            <span className="shelf-subtitle">按销量精选的热门商品</span>
+          </div>
+          <a className="hp-hd-more" href="/category" onClick={function (event) { event.preventDefault(); navigate('/category'); }}>
+            全部商品 <RightOutlined />
+          </a>
         </div>
-      </div> */}
+        <div className="product-strip">
+          {hotProducts.map(function (product) {
+            return <ProductCard key={product.id} product={product} />;
+          })}
+        </div>
+      </section>
 
-      {/* 大家都在买 */}
-      <div className="shelf">
-        <div className="shelf-header">
-          <h2 className="shelf-title">大家都在买</h2>
-          <span className="shelf-subtitle">看看别人都在挑什么</span>
-          <span style={{marginLeft:'auto'}}>
-            <a className="hp-hd-more" href="/category" onClick={function(e){e.preventDefault();navigate('/category');}}>
-              全部商品 <RightOutlined/>
-            </a>
-          </span>
+      <section className="shelf">
+        <div className="shelf-header shelf-header-row">
+          <div>
+            <h2 className="shelf-title">新品上架</h2>
+            <span className="shelf-subtitle">刚刚更新的灵感清单</span>
+          </div>
+          <a className="hp-hd-more" href="/category?sort=new" onClick={function (event) { event.preventDefault(); navigate('/category?sort=new'); }}>
+            更多新品 <RightOutlined />
+          </a>
         </div>
-        <div className="card-scroller">
-          {hot.map(function(p){
+        <div className="product-strip">
+          {newProducts.map(function (product) {
+            return <ProductCard key={product.id} product={product} />;
+          })}
+        </div>
+      </section>
+
+      <section className="quicklinks">
+        <h2 className="quicklinks-title">快速入口</h2>
+        <div className="quicklinks-list">
+          {['手机数码', '智能家居', '美妆护肤', '办公学习', '运动穿戴'].map(function (keyword) {
             return (
-              <div className="card-scroller-item" key={p.id}>
-                <a className="ccard ccard-33"
-                  onClick={function(e){e.preventDefault();navigate('/product/'+p.id);}}
-                  href={'/product/'+p.id}>
-                  <img className="ccard-image" alt={p.name} src={p.cover} />
-                  <div className="ccard-content" style={{padding:'10px'}}>
-                    <div className="ccard-header" style={{fontSize:'12px'}}>{p.name}</div>
-                    <div className="ccard-price" style={{fontSize:'12px',fontWeight:600,marginTop:'1px',opacity:1}}>
-                      ¥{p.price}
-                    </div>
-                  </div>
-                </a>
-              </div>
+              <button className="quicklinks-btn" key={keyword} onClick={function () { navigate('/category?keyword=' + encodeURIComponent(keyword)); }}>
+                {keyword}
+              </button>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* 新品上架 */}
-      <div className="shelf">
-        <div className="shelf-header">
-          <h2 className="shelf-title">新品上架</h2>
-          <span className="shelf-subtitle">新鲜到货，抢先体验</span>
-          <span style={{marginLeft:'auto'}}>
-            <a className="hp-hd-more" href="/category" onClick={function(e){e.preventDefault();navigate('/category');}}>
-              更多新品 <RightOutlined/>
-            </a>
-          </span>
-        </div>
-        <div className="card-scroller">
-          {newest.map(function(p){
-            return (
-              <div className="card-scroller-item" key={p.id}>
-                <a className="ccard ccard-33"
-                  onClick={function(e){e.preventDefault();navigate('/product/'+p.id);}}
-                  href={'/product/'+p.id}>
-                  <img className="ccard-image" alt={p.name} src={p.cover} />
-                  <div className="ccard-content" style={{padding:'10px'}}>
-                    <div className="ccard-header" style={{fontSize:'12px'}}>{p.name}</div>
-                    <div className="ccard-price" style={{fontSize:'12px',fontWeight:600,marginTop:'1px',opacity:1}}>
-                      ¥{p.price}
-                    </div>
-                  </div>
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 限时秒杀 */}
-      <div className="shelf">
-        <div className="shelf-header">
-          <h2 className="shelf-title" style={{color:'#e74c3c'}}>⏰ 限时秒杀</h2>
-          <span className="shelf-subtitle">限时特价，手慢无</span>
-          <span style={{marginLeft:'auto'}}>
-            <a className="hp-hd-more" href="/category" onClick={function(e){e.preventDefault();navigate('/category');}}>
-              更多优惠 <RightOutlined/>
-            </a>
-          </span>
-        </div>
-        <div className="card-scroller">
-          {hot.slice(0,6).map(function(p){
-            var d = Math.round((1-p.price/p.marketPrice)*100);
-            return (
-              <div className="card-scroller-item" key={p.id}>
-                <a className="ccard ccard-33"
-                  onClick={function(e){e.preventDefault();navigate('/product/'+p.id);}}
-                  href={'/product/'+p.id}>
-                  <img className="ccard-image" alt={p.name} src={p.cover} />
-                  {d>0&&<span style={{position:'absolute',top:'6px',left:'6px',background:'#e74c3c',color:'#fff',fontSize:'10px',fontWeight:700,padding:'1px 5px',borderRadius:'3px',zIndex:1,lineHeight:'1.3'}}>-{d}%</span>}
-                  <div className="ccard-content" style={{padding:'10px'}}>
-                    <div className="ccard-header" style={{fontSize:'12px'}}>{p.name}</div>
-                    <div className="ccard-price" style={{fontSize:'12px',fontWeight:600,marginTop:'1px',opacity:1,color:'#e74c3c'}}>
-                      ¥{p.price}
-                    </div>
-                  </div>
-                </a>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 快速入口 */}
-      {/* <div className="hp-tags">
-        <a className="hp-tag" href="/category?keyword=手机" onClick={function(e){e.preventDefault();navigate('/category?keyword=手机');}}>📱 手机专场</a>
-        <a className="hp-tag" href="/category?keyword=智能" onClick={function(e){e.preventDefault();navigate('/category?keyword=智能');}}>🏠 智能设备</a>
-        <a className="hp-tag" href="/category?keyword=美容" onClick={function(e){e.preventDefault();navigate('/category?keyword=美容');}}>💄 美妆热卖</a>
-        <a className="hp-tag" href="/category?keyword=运动" onClick={function(e){e.preventDefault();navigate('/category?keyword=运动');}}>🏃 运动装备</a>
-        <a className="hp-tag" href="/category" onClick={function(e){e.preventDefault();navigate('/category');}}>📦 全部商品</a>
-      </div> */}
-
-      {/* 返回顶部 */}
-      {showBack && (
-        <button className="back-top" onClick={function(){window.scrollTo({top:0,behavior:'smooth'});}} aria-label="返回顶部">
+      {showBackTop ? (
+        <button className="back-top" onClick={function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="返回顶部">
           <ArrowUpOutlined />
         </button>
-      )}
+      ) : null}
     </div>
   );
 }
