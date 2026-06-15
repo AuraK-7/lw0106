@@ -556,6 +556,417 @@
 }
 
 /* ========================================
+   Checkout Page
+   ======================================== */
+.checkout-page {
+  padding: 24px 0 48px;
+}
+
+.checkout-hero-card {
+  background:
+    radial-gradient(circle at top left, rgba(0, 113, 227, 0.08), transparent 32%),
+    linear-gradient(135deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.checkout-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.checkout-steps {
+  min-width: 360px;
+  flex: 1;
+}
+
+.checkout-section-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.checkout-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkout-address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.checkout-address-card {
+  width: 100%;
+  padding: 18px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  outline: none;
+}
+
+.checkout-address-card:hover,
+.checkout-address-card:focus-visible {
+  border-color: rgba(0, 113, 227, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.checkout-address-card.active {
+  border-color: var(--color-accent-blue);
+  background: rgba(0, 113, 227, 0.03);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.checkout-address-card__top,
+.checkout-address-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.checkout-address-card__text {
+  margin: 12px 0 !important;
+  color: var(--color-text-primary);
+}
+
+.checkout-address-card__icon {
+  color: var(--color-accent-blue);
+  font-size: 18px;
+}
+
+.checkout-goods-list .ant-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkout-goods-list__item {
+  padding: 18px !important;
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
+  background: #fff;
+}
+
+.checkout-goods-list__meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout-goods-list__cover {
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: var(--color-bg-secondary);
+}
+
+.checkout-goods-list__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.checkout-goods-list__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.checkout-choice-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.checkout-choice-group .ant-radio-button-wrapper {
+  height: auto !important;
+  white-space: normal;
+  border-radius: 16px !important;
+  border: 1px solid var(--color-border-light) !important;
+  padding: 0 !important;
+}
+
+.checkout-choice-group .ant-radio-button-wrapper::before {
+  display: none !important;
+}
+
+.checkout-choice-group .ant-radio-button-wrapper-checked {
+  border-color: var(--color-accent-blue) !important;
+  background: rgba(0, 113, 227, 0.03) !important;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+  color: inherit !important;
+}
+
+.checkout-choice-group__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+}
+
+.checkout-choice-group__title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.checkout-choice-group__desc {
+  font-size: var(--font-size-footnote);
+  color: var(--color-text-secondary);
+}
+
+.checkout-delivery-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.checkout-mini-panel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--color-bg-secondary);
+}
+
+.checkout-mini-panel .anticon {
+  margin-top: 2px;
+  color: var(--color-accent-blue);
+  font-size: 18px;
+}
+
+.checkout-mini-panel > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkout-inline-input {
+  margin-top: 8px;
+}
+
+.checkout-summary-sticky {
+  position: sticky;
+  top: 88px;
+}
+
+.checkout-summary-card .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.checkout-summary-card__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-summary-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--color-text-tertiary);
+}
+
+.checkout-summary-card__payable {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.checkout-summary-card__payable strong {
+  font-size: 28px;
+  line-height: 1;
+  color: #cf1322;
+}
+
+.checkout-summary-card__alert {
+  margin: 0 !important;
+}
+
+.checkout-summary-card__address {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--color-bg-secondary);
+}
+
+.checkout-summary-card__address-text {
+  margin: 0 !important;
+}
+
+.checkout-summary-card__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--color-text-secondary);
+}
+
+.checkout-summary-card__benefit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.address-map-modal .ant-modal-content {
+  border-radius: 24px !important;
+}
+
+.address-map-modal__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 24px;
+}
+
+.address-map-modal__form,
+.address-map-modal__map-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.address-map-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.address-map-modal__grid--triple {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.address-map-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-map-modal__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.address-map-modal__switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+}
+
+.address-map-modal__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-map-modal__search {
+  display: flex;
+  gap: 12px;
+}
+
+.address-map-modal__map-wrap {
+  position: relative;
+  min-height: 460px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+}
+
+.address-map-modal__map {
+  width: 100%;
+  height: 460px;
+}
+
+.address-map-modal__map-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.address-map-modal__map-placeholder--overlay {
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+@media (max-width: 1023px) {
+  .checkout-hero,
+  .address-map-modal__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-steps,
+  .checkout-address-grid,
+  .checkout-choice-group,
+  .checkout-delivery-panels {
+    min-width: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-summary-sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 736px) {
+  .checkout-page {
+    padding: 16px 0 32px;
+  }
+
+  .checkout-goods-list__item {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .checkout-goods-list__price {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .address-map-modal__grid,
+  .address-map-modal__grid--triple,
+  .address-map-modal__search {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .address-map-modal__map,
+  .address-map-modal__map-wrap {
+    height: 320px;
+    min-height: 320px;
+  }
+}
+
+/* ========================================
   Shelf (rs-cards-shelf)
    ======================================== */
 .shelf {

@@ -354,8 +354,13 @@ export function getDefaultAddress(userId) {
 
 export function saveAddress(payload) {
   const list = readList(STORAGE_KEYS.addresses, initialMockData.addresses);
+  const userAddresses = list.filter(function (item) {
+    return item.userId === payload.userId;
+  });
+  const shouldUseDefault = payload.isDefault || !userAddresses.length;
+  const nextPayload = { ...payload, isDefault: shouldUseDefault };
 
-  if (payload.isDefault) {
+  if (shouldUseDefault) {
     list.forEach(function (item) {
       if (item.userId === payload.userId) {
         item.isDefault = false;
@@ -363,18 +368,22 @@ export function saveAddress(payload) {
     });
   }
 
-  if (payload.id) {
+  let savedAddress = null;
+  if (nextPayload.id) {
     const index = list.findIndex(function (item) {
-      return item.id === payload.id;
+      return item.id === nextPayload.id;
     });
     if (index >= 0) {
-      list[index] = { ...list[index], ...payload };
+      list[index] = { ...list[index], ...nextPayload };
+      savedAddress = list[index];
     }
   } else {
-    list.unshift({ ...payload, id: generateId('addr') });
+    savedAddress = { ...nextPayload, id: generateId('addr') };
+    list.unshift(savedAddress);
   }
 
-  return writeList(STORAGE_KEYS.addresses, list);
+  writeList(STORAGE_KEYS.addresses, list);
+  return savedAddress;
 }
 
 export function deleteAddress(addressId) {
