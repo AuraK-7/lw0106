@@ -629,6 +629,55 @@ export function getRoles() {
   return readList(STORAGE_KEYS.roles, initialMockData.roles);
 }
 
+export function createRole(payload) {
+  const roles = readList(STORAGE_KEYS.roles, initialMockData.roles);
+  const role = {
+    id: generateId('role'),
+    name: payload.name,
+    code: payload.code,
+    loginUsername: payload.loginUsername || '',
+    loginPassword: payload.loginPassword || '',
+    permissions: payload.permissions || [],
+    description: payload.description || '',
+  };
+  roles.unshift(role);
+  return writeList(STORAGE_KEYS.roles, roles);
+}
+
+export function updateRole(roleId, payload) {
+  const roles = readList(STORAGE_KEYS.roles, initialMockData.roles);
+  const index = roles.findIndex(function (item) {
+    return item.id === roleId;
+  });
+
+  if (index < 0) {
+    throw new Error('角色不存在');
+  }
+
+  roles[index] = {
+    ...roles[index],
+    ...payload,
+    permissions: payload.permissions || [],
+  };
+  return writeList(STORAGE_KEYS.roles, roles);
+}
+
+export function deleteRole(roleId) {
+  const admins = readList(STORAGE_KEYS.admins, initialMockData.admins);
+  const hasAdmin = admins.some(function (item) {
+    return item.roleId === roleId;
+  });
+
+  if (hasAdmin) {
+    throw new Error('该角色已绑定管理员，无法删除');
+  }
+
+  const roles = readList(STORAGE_KEYS.roles, initialMockData.roles).filter(function (item) {
+    return item.id !== roleId;
+  });
+  return writeList(STORAGE_KEYS.roles, roles);
+}
+
 export function getAdmins() {
   return readList(STORAGE_KEYS.admins, initialMockData.admins).map(function (admin) {
     const role = getRoles().find(function (item) {
@@ -640,6 +689,51 @@ export function getAdmins() {
       permissions: role ? role.permissions : [],
     };
   });
+}
+
+export function createAdmin(payload) {
+  const admins = readList(STORAGE_KEYS.admins, initialMockData.admins);
+  const admin = {
+    id: generateId('admin'),
+    username: payload.username,
+    password: payload.password,
+    name: payload.name,
+    roleId: payload.roleId,
+  };
+  admins.unshift(admin);
+  return writeList(STORAGE_KEYS.admins, admins);
+}
+
+export function updateAdmin(adminId, payload) {
+  const admins = readList(STORAGE_KEYS.admins, initialMockData.admins);
+  const index = admins.findIndex(function (item) {
+    return item.id === adminId;
+  });
+
+  if (index < 0) {
+    throw new Error('管理员不存在');
+  }
+
+  admins[index] = {
+    ...admins[index],
+    username: payload.username,
+    password: payload.password,
+    name: payload.name,
+    roleId: payload.roleId,
+  };
+  return writeList(STORAGE_KEYS.admins, admins);
+}
+
+export function deleteAdmin(adminId) {
+  const currentAdminId = storage.get(STORAGE_KEYS.adminSession, null);
+  if (currentAdminId === adminId) {
+    throw new Error('不能删除当前登录管理员');
+  }
+
+  const admins = readList(STORAGE_KEYS.admins, initialMockData.admins).filter(function (item) {
+    return item.id !== adminId;
+  });
+  return writeList(STORAGE_KEYS.admins, admins);
 }
 
 export function loginAdmin(payload) {
