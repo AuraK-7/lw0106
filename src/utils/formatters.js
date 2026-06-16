@@ -19,8 +19,9 @@ export function getPermissionLabel(permission) {
 
 export function buildOrderSummary(items) {
   return items.reduce(function (summary, item) {
+    const price = item.specPrice || (item.product ? item.product.price : 0);
     summary.totalQuantity += item.quantity;
-    summary.totalAmount += item.product.price * item.quantity;
+    summary.totalAmount += price * item.quantity;
     return summary;
   }, { totalQuantity: 0, totalAmount: 0 });
 }

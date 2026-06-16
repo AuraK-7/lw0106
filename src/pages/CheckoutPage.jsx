@@ -43,7 +43,8 @@ export default function CheckoutPage() {
 
   const summary = useMemo(function () {
     const goodsAmount = (draft?.items || []).reduce(function (sum, item) {
-      return sum + item.product.price * item.quantity;
+      const price = item.specPrice || (item.product ? item.product.price : 0);
+      return sum + price * item.quantity;
     }, 0);
     const totalQuantity = (draft?.items || []).reduce(function (sum, item) {
       return sum + item.quantity;
@@ -202,9 +203,9 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                         <div className="checkout-goods-list__price">
-                          <Typography.Text>单价 {formatPrice(item.product.price)}</Typography.Text>
+                          <Typography.Text>单价 {formatPrice(item.specPrice || item.product.price)}</Typography.Text>
                           <Typography.Text>数量 x {item.quantity}</Typography.Text>
-                          <Typography.Text strong>{formatPrice(item.product.price * item.quantity)}</Typography.Text>
+                          <Typography.Text strong>{formatPrice((item.specPrice || item.product.price) * item.quantity)}</Typography.Text>
                         </div>
                       </List.Item>
                     );

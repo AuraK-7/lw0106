@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { APP_NAME } from '../constants/app';
 
 // ==================== 内联样式 ====================
 const S = {
@@ -318,7 +319,7 @@ export default function UserAuthPage() {
 
         {/* 标题 */}
         <h1 style={S.title}>
-          {mode === 'login' ? '登录你的星舟商城账户' : '创建新账户'}
+          {mode === 'login' ? `登录你的${APP_NAME}账户` : '创建新账户'}
         </h1>
         <p style={S.subtitle}>
           {mode === 'login'

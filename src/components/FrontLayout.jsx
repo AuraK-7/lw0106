@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Badge, Dropdown, message } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { APP_NAME } from '../constants/app';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
 
@@ -68,7 +69,7 @@ export default function FrontLayout() {
       <header className="site-header">
         <div className="site-header-inner">
           <a className="site-logo" href="/" onClick={function (event) { event.preventDefault(); navigate('/'); }}>
-            星舷商城
+            {APP_NAME}
           </a>
 
           <nav className="site-nav">
@@ -143,8 +144,8 @@ export default function FrontLayout() {
 
       <footer className="site-footer">
         <div className="container">
-          <p>星舷商城</p>
-          <p className="footer-copy">© 2026 星舷商城. All rights reserved.</p>
+          <p>{APP_NAME}</p>
+          <p className="footer-copy">© 2026 {APP_NAME}. All rights reserved.</p>
         </div>
       </footer>
 

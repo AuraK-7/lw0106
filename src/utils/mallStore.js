@@ -21,6 +21,22 @@ export const STORAGE_KEYS = {
 
 const DATA_EVENT = 'mall:datachange';
 
+// 全量商品规格升级映射表：将旧格式（字符串数组）升级为新格式（对象数组 { name, price, marketPrice, stock }）
+const PRODUCT_SPEC_UPGRADE_MAP = {
+  prod_1001: [{ name: '曜石黑 256G', price: 4999, marketPrice: 5399, stock: 18 }, { name: '深海蓝 512G', price: 5799, marketPrice: 6199, stock: 18 }],
+  prod_1002: [{ name: '银色 128G', price: 2899, marketPrice: 3199, stock: 30 }, { name: '灰色 256G', price: 3299, marketPrice: 3599, stock: 28 }],
+  prod_1003: [{ name: '标准版', price: 1499, marketPrice: 1799, stock: 25 }, { name: '除醛增强版', price: 1899, marketPrice: 2199, stock: 17 }],
+  prod_1004: [{ name: '基础版', price: 2299, marketPrice: 2599, stock: 15 }, { name: '自动上下水版', price: 3299, marketPrice: 3699, stock: 9 }],
+  prod_1005: [{ name: '30ml 双瓶装', price: 699, marketPrice: 799, stock: 0 }, { name: '50ml 礼盒装', price: 899, marketPrice: 999, stock: 10 }],
+  prod_1006: [{ name: '暖调大地色', price: 239, marketPrice: 299, stock: 60 }, { name: '冷调灰粉色', price: 239, marketPrice: 299, stock: 60 }],
+  prod_1007: [{ name: '青轴', price: 399, marketPrice: 459, stock: 25 }, { name: '静音红轴', price: 429, marketPrice: 499, stock: 22 }],
+  prod_1008: [{ name: '白色', price: 899, marketPrice: 1099, stock: 32 }, { name: '黑色', price: 899, marketPrice: 1099, stock: 33 }],
+  prod_1009: [{ name: '夜幕黑', price: 1199, marketPrice: 1399, stock: 20 }, { name: '薄荷绿', price: 1199, marketPrice: 1399, stock: 19 }],
+  prod_1010: [{ name: '曜石黑', price: 599, marketPrice: 699, stock: 44 }, { name: '云雾白', price: 599, marketPrice: 699, stock: 44 }],
+  prod_1011: [{ name: '银黑拼色', price: 3699, marketPrice: 4099, stock: 10 }, { name: '纯黑版', price: 3899, marketPrice: 4299, stock: 8 }],
+  prod_1012: [{ name: '白橙暖光', price: 199, marketPrice: 239, stock: 56 }, { name: '深灰冷光', price: 199, marketPrice: 239, stock: 40 }],
+};
+
 function deepClone(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -84,7 +100,28 @@ function readCategories() {
 }
 
 function readProducts() {
-  return readList(STORAGE_KEYS.products, initialMockData.products);
+  const products = readList(STORAGE_KEYS.products, initialMockData.products);
+  let hasUpgraded = false;
+  const upgraded = products.map(function (product) {
+    if (Array.isArray(product.specs) && product.specs.length && typeof product.specs[0] === 'object') {
+      return product;
+    }
+    const newSpecs = PRODUCT_SPEC_UPGRADE_MAP[product.id];
+    if (!newSpecs || !newSpecs.length) return product;
+    hasUpgraded = true;
+    return {
+      ...product,
+      specs: deepClone(newSpecs),
+      price: newSpecs[0].price,
+      marketPrice: newSpecs[0].marketPrice,
+      stock: newSpecs.reduce(function (sum, s) { return sum + (s.stock || 0); }, 0),
+    };
+  });
+  if (hasUpgraded) {
+    storage.set(STORAGE_KEYS.products, upgraded);
+    emitMallChange();
+  }
+  return hasUpgraded ? upgraded : products;
 }
 
 export function getCategories() {
@@ -186,6 +223,20 @@ export function getProductById(productId) {
   return getProducts({ includeUnpublished: true }).all.find(function (item) {
     return item.id === productId;
   });
+}
+
+// 获取某个规格的价格/库存信息，兼容旧格式（字符串数组）和新格式（对象数组）
+export function getSpecInfo(product, specName) {
+  if (!product || !specName) return { price: product?.price, marketPrice: product?.marketPrice, stock: product?.stock };
+  const specs = product.specs;
+  if (!Array.isArray(specs) || !specs.length) return { price: product.price, marketPrice: product.marketPrice, stock: product.stock };
+  // 新格式：对象数组
+  if (typeof specs[0] === 'object') {
+    const found = specs.find(function (s) { return s.name === specName; });
+    if (found) return { name: found.name, price: found.price, marketPrice: found.marketPrice, stock: found.stock };
+  }
+  // 旧格式或无匹配：回退到商品默认
+  return { price: product.price, marketPrice: product.marketPrice, stock: product.stock };
 }
 
 function normalizeProductPayload(payload) {
@@ -413,7 +464,7 @@ export function getCartItems(userId) {
       return {
         ...item,
         product,
-        amount: product.price * item.quantity,
+        amount: (item.specPrice || product.price) * item.quantity,
       };
     })
     .filter(Boolean);
@@ -424,16 +475,26 @@ export function addCartItem(payload) {
   const existed = list.find(function (item) {
     return item.userId === payload.userId && item.productId === payload.productId && item.spec === payload.spec;
   });
+  const product = getProductById(payload.productId);
+  const specInfo = getSpecInfo(product, payload.spec);
 
   if (existed) {
-    existed.quantity += payload.quantity;
+    const nextQuantity = existed.quantity + payload.quantity;
+    if (nextQuantity > specInfo.stock) {
+      throw new Error('库存不足，购物车中已有 ' + existed.quantity + ' 件，当前最多可购买 ' + specInfo.stock + ' 件');
+    }
+    existed.quantity = nextQuantity;
     existed.checked = true;
   } else {
+    if (payload.quantity > specInfo.stock) {
+      throw new Error('库存不足，当前最多可购买 ' + specInfo.stock + ' 件');
+    }
     list.unshift({
       id: generateId('cart'),
       userId: payload.userId,
       productId: payload.productId,
       spec: payload.spec,
+      specPrice: specInfo.price,
       quantity: payload.quantity,
       checked: true,
     });
@@ -505,7 +566,8 @@ export function createOrder(payload) {
       throw new Error('商品已下架，无法下单');
     }
 
-    if (product.stock < Number(item.quantity)) {
+    const specInfo = getSpecInfo(product, item.spec);
+    if (specInfo.stock < Number(item.quantity)) {
       throw new Error('库存不足，无法下单');
     }
   });
@@ -514,8 +576,20 @@ export function createOrder(payload) {
     const product = products.find(function (current) {
       return current.id === item.productId;
     });
+    const specInfo = getSpecInfo(product, item.spec);
     if (product) {
-      product.stock -= item.quantity;
+      const hasObjectSpecs = Array.isArray(product.specs) && product.specs.length && typeof product.specs[0] === 'object';
+      if (hasObjectSpecs) {
+        // 对象规格：只扣当前规格 stock，product.stock 重新汇总为各规格 stock 之和
+        const specObj = product.specs.find(function (s) { return s.name === item.spec; });
+        if (specObj && specObj.stock !== undefined) {
+          specObj.stock -= item.quantity;
+        }
+        product.stock = product.specs.reduce(function (sum, s) { return sum + (s.stock || 0); }, 0);
+      } else {
+        // 字符串规格或无规格：只扣 product.stock
+        product.stock -= item.quantity;
+      }
       product.sales += item.quantity;
     }
   });
@@ -533,12 +607,13 @@ export function createOrder(payload) {
       const product = products.find(function (current) {
         return current.id === item.productId;
       });
+      const specInfo = getSpecInfo(product, item.spec);
       return {
         id: generateId('order_item'),
         productId: item.productId,
         productName: product.name,
         spec: item.spec,
-        price: product.price,
+        price: specInfo.price,
         quantity: item.quantity,
         cover: product.cover,
       };
