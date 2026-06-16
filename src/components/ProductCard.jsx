@@ -1,9 +1,10 @@
 import { ShoppingOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
+import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatPrice } from '../utils/formatters';
 
-export default function ProductCard({ product }) {
+function ProductCard({ product }) {
   const navigate = useNavigate();
   const discount = product.marketPrice > product.price
     ? Math.round((1 - product.price / product.marketPrice) * 10)
@@ -40,3 +41,5 @@ export default function ProductCard({ product }) {
     </article>
   );
 }
+
+export default memo(ProductCard);

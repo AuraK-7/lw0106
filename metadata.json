@@ -1,11 +1,12 @@
 {
-  "studentName": "演示同学",
-  "studentId": "20240001",
+  "studentName": "宁苏颜",
+  "studentId": "23301071",
   "assignmentName": "第四次作业——React 商城系统",
   "members": [
-    { "name": "演示同学", "studentId": "20240001" },
-    { "name": "协作同学A", "studentId": "20240002" },
-    { "name": "协作同学B", "studentId": "20240003" },
-    { "name": "协作同学C", "studentId": "20240004" }
+    { "name": "宁苏颜", "studentId": "23301071" },
+    { "name": "韩子若", "studentId": "23301097" },
+    { "name": "刘禹彤", "studentId": "23301158" },
+    { "name": "李昕哲", "studentId": "23301101" },
+    { "name": "蒲显科", "studentId": "23301132" }
   ]
 }
