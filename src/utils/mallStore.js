@@ -14,6 +14,8 @@ export const STORAGE_KEYS = {
   admins: 'mall_admins',
   orders: 'mall_orders',
   cartItems: 'mall_cart_items',
+  coupons: 'mall_coupons',
+  userCoupons: 'mall_user_coupons',
   userSession: 'mall_user_session',
   adminSession: 'mall_admin_session',
   checkoutDraft: 'mall_checkout_draft',
@@ -85,6 +87,8 @@ export function initializeMallData() {
   storage.set(STORAGE_KEYS.admins, initialMockData.admins);
   storage.set(STORAGE_KEYS.orders, initialMockData.orders);
   storage.set(STORAGE_KEYS.cartItems, initialMockData.cartItems);
+  storage.set(STORAGE_KEYS.coupons, initialMockData.coupons || []);
+  storage.set(STORAGE_KEYS.userCoupons, initialMockData.userCoupons || []);
   storage.set(STORAGE_KEYS.userSession, null);
   storage.set(STORAGE_KEYS.adminSession, null);
   storage.set(STORAGE_KEYS.checkoutDraft, null);
@@ -517,6 +521,188 @@ export function removeCartItems(cartIds) {
   return writeList(STORAGE_KEYS.cartItems, list);
 }
 
+function readCoupons() {
+  return readList(STORAGE_KEYS.coupons, initialMockData.coupons || []);
+}
+
+function readUserCoupons() {
+  return readList(STORAGE_KEYS.userCoupons, initialMockData.userCoupons || []);
+}
+
+function writeUserCoupons(value) {
+  return writeList(STORAGE_KEYS.userCoupons, value);
+}
+
+function getCouponById(couponId) {
+  return readCoupons().find(function (item) {
+    return item.id === couponId;
+  }) || null;
+}
+
+function isCouponExpired(coupon) {
+  return coupon.endAt && new Date(coupon.endAt.replace(/-/g, '/')).getTime() < Date.now();
+}
+
+function getCouponEligibleAmount(coupon, items) {
+  return (items || []).reduce(function (sum, item) {
+    const product = item.product || getProductById(item.productId);
+    if (!product) return sum;
+    const productMatched = (coupon.productIds || []).includes(product.id);
+    const categoryMatched = (coupon.categoryIds || []).includes(product.categoryId);
+    if (!productMatched && !categoryMatched) return sum;
+    return sum + product.price * Number(item.quantity || 1);
+  }, 0);
+}
+
+function buildCouponState(coupon, userId) {
+  const userCoupons = readUserCoupons();
+  const claimedCount = userCoupons.filter(function (item) {
+    return item.couponId === coupon.id;
+  }).length;
+  const userClaimed = userId ? userCoupons.find(function (item) {
+    return item.userId === userId && item.couponId === coupon.id && item.status !== 'used';
+  }) : null;
+  const remainingStock = Math.max(0, Number(coupon.totalStock || 0) - claimedCount);
+  const expired = isCouponExpired(coupon);
+  const status = expired ? 'expired' : userClaimed ? 'claimed' : remainingStock <= 0 ? 'soldOut' : 'claimable';
+  return {
+    ...coupon,
+    userCouponId: userClaimed?.id || '',
+    remainingStock,
+    status,
+  };
+}
+
+export function getActivityCoupons(activityId, userId = '') {
+  return readCoupons().filter(function (coupon) {
+    return coupon.activityId === activityId;
+  }).map(function (coupon) {
+    return buildCouponState(coupon, userId);
+  });
+}
+
+export function claimCoupon(userId, couponId) {
+  if (!userId) {
+    throw new Error('请先登录后再领取优惠券');
+  }
+  const coupon = getCouponById(couponId);
+  if (!coupon) {
+    throw new Error('优惠券不存在');
+  }
+  const state = buildCouponState(coupon, userId);
+  if (state.status === 'expired') {
+    throw new Error('优惠券已结束');
+  }
+  if (state.status === 'soldOut') {
+    throw new Error('优惠券已抢光');
+  }
+  if (state.status === 'claimed') {
+    return { coupon: state, claimed: false, reason: 'alreadyClaimed' };
+  }
+  const userCoupons = readUserCoupons();
+  const userClaimCount = userCoupons.filter(function (item) {
+    return item.userId === userId && item.couponId === couponId;
+  }).length;
+  if (userClaimCount >= Number(coupon.perUserLimit || 1)) {
+    return { coupon: state, claimed: false, reason: 'limitReached' };
+  }
+  const userCoupon = {
+    id: generateId('user_coupon'),
+    userId,
+    couponId,
+    status: 'available',
+    claimedAt: new Date().toLocaleString('zh-CN', { hour12: false }),
+    usedAt: '',
+    orderId: '',
+  };
+  writeUserCoupons([userCoupon].concat(userCoupons));
+  return { coupon: buildCouponState(coupon, userId), userCoupon, claimed: true };
+}
+
+export function claimActivityCoupons(userId, activityId) {
+  const coupons = getActivityCoupons(activityId, userId);
+  return coupons.reduce(function (result, coupon) {
+    if (coupon.status !== 'claimable') {
+      result.skipped += 1;
+      return result;
+    }
+    const claimed = claimCoupon(userId, coupon.id);
+    if (claimed.claimed) {
+      result.claimed += 1;
+    } else {
+      result.skipped += 1;
+    }
+    return result;
+  }, { claimed: 0, skipped: 0 });
+}
+
+export function getUserCoupons(userId) {
+  const couponMap = Object.fromEntries(readCoupons().map(function (coupon) {
+    return [coupon.id, coupon];
+  }));
+  return readUserCoupons().filter(function (item) {
+    return item.userId === userId;
+  }).map(function (item) {
+    return {
+      ...item,
+      coupon: couponMap[item.couponId] || null,
+    };
+  }).filter(function (item) {
+    return item.coupon;
+  });
+}
+
+export function getAvailableCoupons(userId, items) {
+  return getUserCoupons(userId).map(function (userCoupon) {
+    const coupon = userCoupon.coupon;
+    const eligibleAmount = getCouponEligibleAmount(coupon, items);
+    const expired = isCouponExpired(coupon);
+    let available = userCoupon.status === 'available' && !expired;
+    let reason = '';
+    if (userCoupon.status === 'used') {
+      available = false;
+      reason = '已使用';
+    } else if (expired) {
+      available = false;
+      reason = '已过期';
+    } else if (eligibleAmount < Number(coupon.threshold || 0)) {
+      available = false;
+      reason = '未满足使用门槛';
+    }
+    return {
+      ...userCoupon,
+      available,
+      reason,
+      eligibleAmount,
+      discountAmount: available ? Math.min(Number(coupon.amount || 0), eligibleAmount) : 0,
+    };
+  }).sort(function (a, b) {
+    return b.discountAmount - a.discountAmount;
+  });
+}
+
+export function applyBestCoupon(items, userCoupons) {
+  return (userCoupons || []).filter(function (item) {
+    return item.available;
+  }).sort(function (a, b) {
+    return b.discountAmount - a.discountAmount;
+  })[0] || null;
+}
+
+export function markCouponUsed(userCouponId, orderId) {
+  if (!userCouponId) return null;
+  const list = readUserCoupons().map(function (item) {
+    if (item.id !== userCouponId) return item;
+    return {
+      ...item,
+      status: 'used',
+      usedAt: new Date().toLocaleString('zh-CN', { hour12: false }),
+      orderId,
+    };
+  });
+  return writeUserCoupons(list);
+}
+
 export function setCheckoutDraft(payload) {
   storage.set(STORAGE_KEYS.checkoutDraft, payload);
   emitMallChange();
@@ -537,6 +723,10 @@ export function createOrder(payload) {
   const cartItems = readList(STORAGE_KEYS.cartItems, initialMockData.cartItems);
   const addresses = readList(STORAGE_KEYS.addresses, initialMockData.addresses);
   const summary = buildOrderSummary(payload.items);
+  const goodsAmount = Number(payload.goodsAmount ?? summary.totalAmount);
+  const freightAmount = Number(payload.freightAmount || 0);
+  const discountAmount = Number(payload.discountAmount || 0);
+  const payAmount = Math.max(0, Number(payload.payAmount ?? (goodsAmount + freightAmount - discountAmount)));
   const address = addresses.find(function (item) {
     return item.id === payload.addressId && item.userId === payload.userId;
   });
@@ -599,7 +789,14 @@ export function createOrder(payload) {
     orderNo: 'XS' + Date.now(),
     userId: payload.userId,
     status: '待付款',
-    totalAmount: summary.totalAmount,
+    totalAmount: payAmount,
+    goodsAmount,
+    freightAmount,
+    discountAmount,
+    payAmount,
+    couponId: payload.couponId || '',
+    couponTitle: payload.couponTitle || '',
+    userCouponId: payload.userCouponId || '',
     addressId: payload.addressId,
     createdAt: new Date().toLocaleString('zh-CN', { hour12: false }),
     source: payload.source,
@@ -622,6 +819,7 @@ export function createOrder(payload) {
 
   writeList(STORAGE_KEYS.products, products);
   writeList(STORAGE_KEYS.orders, [order].concat(orders));
+  markCouponUsed(payload.userCouponId, order.id);
 
   if (payload.source === 'cart') {
     const checkedIds = payload.items.map(function (item) {

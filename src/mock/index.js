@@ -5,7 +5,7 @@ export const banners = [
     title: '把好用的设备带回日常',
     subtitle: '手机、平板、耳机与智能穿戴，精选热卖单品限时推荐。',
     image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80',
-    link: '/category?category=cat_phone',
+    link: '/',
   },
   {
     id: 'banner_2',
@@ -13,7 +13,7 @@ export const banners = [
     title: '让家里的每一天更轻松',
     subtitle: '智能家居、清洁设备与氛围好物，给生活多一点秩序感。',
     image: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&w=1600&q=80',
-    link: '/category?category=cat_home',
+    link: '/',
   },
   {
     id: 'banner_3',
@@ -21,7 +21,7 @@ export const banners = [
     title: '通勤、运动、办公都能选',
     subtitle: '后台维护商品后，前台列表会同步更新，适合课程演示联动效果。',
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1600&q=80',
-    link: '/category?sort=new',
+    link: '/',
   },
 ];
 
@@ -78,4 +78,13 @@ export const cartItems = [
   { id: 'cart_1002', userId: 'user_1001', productId: 'prod_1003', spec: '标准版', quantity: 1, checked: false },
 ];
 
-export const initialMockData = { banners, categories, products, users, addresses, roles, admins, orders, cartItems };
+export const coupons = [
+  { id: 'coupon_phone_500', activityId: 'cat_phone', title: '手机数码满 5000 减 500', amount: 500, threshold: 5000, categoryIds: ['cat_phone'], productIds: [], startAt: '2026-06-01 00:00:00', endAt: '2026-12-31 23:59:59', totalStock: 30, perUserLimit: 1, stackable: false, type: 'category' },
+  { id: 'coupon_phone_300', activityId: 'cat_phone', title: '旗舰手机满 3000 减 300', amount: 300, threshold: 3000, categoryIds: [], productIds: ['prod_1001', 'prod_1011'], startAt: '2026-06-01 00:00:00', endAt: '2026-12-31 23:59:59', totalStock: 20, perUserLimit: 1, stackable: false, type: 'product' },
+  { id: 'coupon_phone_120', activityId: 'cat_phone', title: '平板学习满 1200 减 120', amount: 120, threshold: 1200, categoryIds: [], productIds: ['prod_1002'], startAt: '2026-06-01 00:00:00', endAt: '2026-12-31 23:59:59', totalStock: 25, perUserLimit: 1, stackable: false, type: 'product' },
+  { id: 'coupon_phone_60', activityId: 'cat_phone', title: '数码配件满 600 减 60', amount: 60, threshold: 600, categoryIds: ['cat_phone'], productIds: [], startAt: '2026-06-01 00:00:00', endAt: '2026-12-31 23:59:59', totalStock: 0, perUserLimit: 1, stackable: false, type: 'category' },
+];
+
+export const userCoupons = [];
+
+export const initialMockData = { banners, categories, products, users, addresses, roles, admins, orders, cartItems, coupons, userCoupons };

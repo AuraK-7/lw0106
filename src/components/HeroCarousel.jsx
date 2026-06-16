@@ -2,7 +2,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function HeroCarousel({ banners = [] }) {
+export default function HeroCarousel({ banners = [], onShopNow }) {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
   const total = banners.length;
@@ -21,6 +21,14 @@ export default function HeroCarousel({ banners = [] }) {
     setCurrent(function (prev) { return (prev + offset + total) % total; });
   }
 
+  function handleShopNow(item) {
+    if (onShopNow) {
+      onShopNow(item);
+      return;
+    }
+    navigate('/');
+  }
+
   return (
     <section className="hero-carousel" aria-label="首页轮播图">
       {banners.map(function (item, index) {
@@ -33,7 +41,7 @@ export default function HeroCarousel({ banners = [] }) {
               <span className="hero-kicker">{item.kicker || '今日推荐'}</span>
               <h1>{item.title}</h1>
               <p>{item.subtitle}</p>
-              <button className="btn-primary btn-large" onClick={function () { navigate(item.link || '/category'); }}>
+              <button className="btn-primary btn-large" onClick={function () { handleShopNow(item); }}>
                 立即选购
               </button>
             </div>

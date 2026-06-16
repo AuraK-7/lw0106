@@ -13,7 +13,7 @@ import AddressMapModal from '../components/AddressMapModal';
 import { useMallData } from '../hooks/useMallData';
 import { useUser } from '../contexts/UserContext';
 import { formatPrice } from '../utils/formatters';
-import { createOrder, getAddresses, getCheckoutDraft, getDefaultAddress, saveAddress } from '../utils/mallStore';
+import { applyBestCoupon, createOrder, getAddresses, getAvailableCoupons, getCheckoutDraft, getDefaultAddress, saveAddress } from '../utils/mallStore';
 
 const DELIVERY_OPTIONS = [
   {
@@ -40,6 +40,17 @@ export default function CheckoutPage() {
   const [editingAddress, setEditingAddress] = useState(null);
   const [deliveryType, setDeliveryType] = useState('express');
   const [buyerMessage, setBuyerMessage] = useState('');
+  const [selectedUserCouponId, setSelectedUserCouponId] = useState('');
+
+  const availableCoupons = useMemo(function () {
+    return user ? getAvailableCoupons(user.id, draft?.items || []) : [];
+  }, [user, draft?.items]);
+
+  const selectedCoupon = useMemo(function () {
+    return availableCoupons.find(function (item) {
+      return item.id === selectedUserCouponId && item.available;
+    }) || null;
+  }, [availableCoupons, selectedUserCouponId]);
 
   const summary = useMemo(function () {
     const goodsAmount = (draft?.items || []).reduce(function (sum, item) {
@@ -50,9 +61,10 @@ export default function CheckoutPage() {
       return sum + item.quantity;
     }, 0);
     const freightAmount = deliveryType === 'pickup' || goodsAmount >= 99 ? 0 : 12;
-    const payAmount = goodsAmount + freightAmount;
-    return { goodsAmount, totalQuantity, freightAmount, payAmount };
-  }, [draft?.items, deliveryType]);
+    const discountAmount = selectedCoupon?.discountAmount || 0;
+    const payAmount = Math.max(0, goodsAmount + freightAmount - discountAmount);
+    return { goodsAmount, totalQuantity, freightAmount, discountAmount, payAmount };
+  }, [draft?.items, deliveryType, selectedCoupon?.discountAmount]);
 
   const selectedAddress = useMemo(function () {
     return addresses.find(function (item) {
@@ -66,6 +78,21 @@ export default function CheckoutPage() {
       setSelectedAddressId(address?.id || addresses[0]?.id || '');
     }
   }, [user, addresses, selectedAddressId]);
+
+  useEffect(function () {
+    if (!availableCoupons.length) {
+      setSelectedUserCouponId('');
+      return;
+    }
+    if (selectedUserCouponId && availableCoupons.some(function (item) { return item.id === selectedUserCouponId && item.available; })) {
+      return;
+    }
+    const draftCoupon = availableCoupons.find(function (item) {
+      return item.id === draft?.userCouponId && item.available;
+    });
+    const bestCoupon = applyBestCoupon(draft?.items || [], availableCoupons);
+    setSelectedUserCouponId((draftCoupon || bestCoupon)?.id || '');
+  }, [availableCoupons, draft?.items, draft?.userCouponId, selectedUserCouponId]);
 
   if (!draft?.items?.length) return <Card className="section-card"><Empty description="暂无待提交订单，请从购物车或商品详情发起购买"><Button type="primary" onClick={function () { navigate('/'); }}>返回首页</Button></Empty></Card>;
 
@@ -182,6 +209,45 @@ export default function CheckoutPage() {
               <Card className="section-card checkout-section-card">
                 <div className="checkout-section-head">
                   <div>
+                    <Typography.Title level={3}>优惠券</Typography.Title>
+                    <Typography.Text type="secondary">系统会默认选择当前订单可用且优惠最大的券，也可以手动切换。</Typography.Text>
+                  </div>
+                  {selectedCoupon ? <Tag color="red">已优惠 {formatPrice(selectedCoupon.discountAmount)}</Tag> : <Tag>暂无可用券</Tag>}
+                </div>
+
+                {availableCoupons.length ? (
+                  <Radio.Group
+                    className="checkout-coupon-group"
+                    value={selectedUserCouponId || 'none'}
+                    onChange={function (event) {
+                      setSelectedUserCouponId(event.target.value === 'none' ? '' : event.target.value);
+                    }}
+                  >
+                    <Radio.Button value="none">
+                      <div className="checkout-coupon-card">
+                        <strong>不使用优惠券</strong>
+                        <span>保留原价结算</span>
+                      </div>
+                    </Radio.Button>
+                    {availableCoupons.map(function (userCoupon) {
+                      return (
+                        <Radio.Button key={userCoupon.id} value={userCoupon.id} disabled={!userCoupon.available}>
+                          <div className={'checkout-coupon-card' + (!userCoupon.available ? ' disabled' : '')}>
+                            <strong>{userCoupon.coupon.title}</strong>
+                            <span>{userCoupon.available ? '可抵扣 ' + formatPrice(userCoupon.discountAmount) : userCoupon.reason}</span>
+                          </div>
+                        </Radio.Button>
+                      );
+                    })}
+                  </Radio.Group>
+                ) : (
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无可用于当前订单的优惠券" />
+                )}
+              </Card>
+
+              <Card className="section-card checkout-section-card">
+                <div className="checkout-section-head">
+                  <div>
                     <Typography.Title level={3}>确认商品清单</Typography.Title>
                     <Typography.Text type="secondary">对照商品、规格、数量和小计，符合淘宝式结算页展示逻辑。</Typography.Text>
                   </div>
@@ -288,6 +354,10 @@ export default function CheckoutPage() {
                     <span>运费</span>
                     <span>{summary.freightAmount ? formatPrice(summary.freightAmount) : '免运费'}</span>
                   </div>
+                  <div className="checkout-summary-card__row">
+                    <span>优惠券</span>
+                    <span>{summary.discountAmount ? '-' + formatPrice(summary.discountAmount) : '未使用'}</span>
+                  </div>
                 </div>
 
                 <div className="checkout-summary-card__payable">
@@ -335,6 +405,13 @@ export default function CheckoutPage() {
                         addressId: selectedAddressId,
                         items: draft.items,
                         source: draft.source,
+                        goodsAmount: summary.goodsAmount,
+                        freightAmount: summary.freightAmount,
+                        discountAmount: summary.discountAmount,
+                        payAmount: summary.payAmount,
+                        couponId: selectedCoupon?.couponId || '',
+                        couponTitle: selectedCoupon?.coupon?.title || '',
+                        userCouponId: selectedCoupon?.id || '',
                       });
                       message.success('订单提交成功');
                       if (buyerMessage.trim()) {

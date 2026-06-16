@@ -20,7 +20,6 @@ export default function FrontLayout() {
 
   const navLinks = [
     { key: '/', label: '首页' },
-    { key: '/category', label: '分类' },
   ];
 
   const userMenuItems = [
@@ -64,6 +63,10 @@ export default function FrontLayout() {
     items: userMenuItems,
   };
 
+  function goSearch() {
+    navigate('/', { state: { focusSearch: true } });
+  }
+
   return (
     <div className="page-shell">
       <header className="site-header">
@@ -89,7 +92,7 @@ export default function FrontLayout() {
           </nav>
 
           <div className="site-actions">
-            <button className="site-action-btn" onClick={function () { navigate('/category'); }} title="搜索">
+            <button className="site-action-btn" onClick={goSearch} title="搜索">
               <SearchOutlined style={{ fontSize: 18 }} />
             </button>
             <button className="site-action-btn" onClick={function () { navigate('/cart'); }} title="购物车">

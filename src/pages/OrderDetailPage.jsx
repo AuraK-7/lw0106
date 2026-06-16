@@ -337,11 +337,19 @@ export default function OrderDetailPage() {
           <h2 style={S.cardTitle}>金额汇总</h2>
           <div style={S.summaryRow}>
             <span>商品总额</span>
-            <span>{formatPrice(order.totalAmount)}</span>
+            <span>{formatPrice(order.goodsAmount ?? order.totalAmount)}</span>
+          </div>
+          <div style={S.summaryRow}>
+            <span>运费</span>
+            <span>{order.freightAmount ? formatPrice(order.freightAmount) : '免运费'}</span>
+          </div>
+          <div style={S.summaryRow}>
+            <span>{order.couponTitle || '优惠券'}</span>
+            <span>{order.discountAmount ? '-' + formatPrice(order.discountAmount) : '未使用'}</span>
           </div>
           <div style={S.summaryTotal}>
             <span>应付金额</span>
-            <span>{formatPrice(order.totalAmount)}</span>
+            <span>{formatPrice(order.payAmount ?? order.totalAmount)}</span>
           </div>
         </div>
       </div>

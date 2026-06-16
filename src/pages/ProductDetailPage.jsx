@@ -5,9 +5,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import { useMallData } from '../hooks/useMallData';
 import { formatPrice } from '../utils/formatters';
-import { addCartItem, generateId, getProductById, getSpecInfo, setCheckoutDraft } from '../utils/mallStore';
+import { addCartItem, applyBestCoupon, generateId, getAvailableCoupons, getProductById, getSpecInfo, setCheckoutDraft } from '../utils/mallStore';
 
-// ---- 从 specs 数组中提取展示用的名称列表（兼容新旧格式） ----
 function getSpecNames(specs) {
   if (!Array.isArray(specs)) return [];
   if (typeof specs[0] === 'object') return specs.map(function (s) { return s.name; });
@@ -23,7 +22,6 @@ export default function ProductDetailPage() {
   const [selectedSpec, setSelectedSpec] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-  // ---- 当前规格的价格/库存（兼容旧格式） ----
   const specInfo = getSpecInfo(product, selectedSpec);
   const currentPrice = specInfo.price;
   const currentMarketPrice = specInfo.marketPrice;
@@ -42,7 +40,7 @@ export default function ProductDetailPage() {
     return (
       <Card className="section-card">
         <Typography.Title level={3}>商品不存在或已被删除</Typography.Title>
-        <Button onClick={function () { navigate('/category'); }}>返回商品分类</Button>
+        <Button onClick={function () { navigate('/'); }}>返回首页</Button>
       </Card>
     );
   }
@@ -88,17 +86,24 @@ export default function ProductDetailPage() {
 
   function handleBuyNow() {
     if (!ensureLogin() || !validateQuantity()) return;
+    const items = [{
+      id: generateId('draft'),
+      userId: user.id,
+      productId: product.id,
+      spec: selectedSpec,
+      specPrice: currentPrice,
+      quantity,
+      product,
+    }];
+    const availableCoupons = getAvailableCoupons(user.id, items);
+    const bestCoupon = applyBestCoupon(items, availableCoupons);
     setCheckoutDraft({
       source: 'direct',
-      items: [{
-        id: generateId('draft'),
-        userId: user.id,
-        productId: product.id,
-        spec: selectedSpec,
-        specPrice: currentPrice,
-        quantity,
-        product,
-      }],
+      items,
+      couponId: bestCoupon?.couponId || '',
+      userCouponId: bestCoupon?.id || '',
+      couponTitle: bestCoupon?.coupon?.title || '',
+      discountAmount: bestCoupon?.discountAmount || 0,
     });
     navigate('/checkout');
   }
@@ -150,6 +155,8 @@ export default function ProductDetailPage() {
               <Typography.Text strong>购买数量</Typography.Text>
               <div className="qty-wrap">
                 <InputNumber
+                  min={0}
+                  max={currentStock}
                   value={quantity}
                   disabled={soldOut}
                   onChange={function (value) { setQuantity(value); }}

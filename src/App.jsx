@@ -3,9 +3,10 @@ import AdminLayout from './components/AdminLayout';
 import { AdminRoute } from './components/AdminRoute';
 import FrontLayout from './components/FrontLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import ActivityPage from './pages/ActivityPage';
 import HomePage from './pages/HomePage';
-import CategoryPage from './pages/CategoryPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import SearchPage from './pages/SearchPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PayPage from './pages/PayPage';
@@ -25,7 +26,8 @@ export default function App() {
       <Routes>
         <Route element={<FrontLayout />} path="/">
           <Route element={<HomePage />} index />
-          <Route element={<CategoryPage />} path="category" />
+          <Route element={<ActivityPage />} path="activity/:activityId" />
+          <Route element={<SearchPage />} path="search" />
           <Route element={<ProductDetailPage />} path="product/:id" />
           <Route element={<ProtectedRoute><CartPage /></ProtectedRoute>} path="cart" />
           <Route element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} path="checkout" />
